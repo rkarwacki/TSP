@@ -23,7 +23,7 @@ public abstract class TSPSolver {
 
     public abstract void solve();
 
-    public abstract void iterationStep();
+    public abstract void algorithmStep();
 
     public void clear() {
         points.clear();
@@ -47,7 +47,7 @@ public abstract class TSPSolver {
         solution = randomTour;
     }
 
-    public static double getTotalTourCost(ArrayList<Point> points) {
+    public double getTotalTourCost(ArrayList<Point> points) {
         double cost = 0;
         int i;
         if (points.size() > 2) {

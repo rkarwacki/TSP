@@ -12,6 +12,10 @@ public class AnnealingSolver extends TSPSolver {
     private int minimalTemperature;
     private int numberOfTrials;
     private double coolingCoefficient;
+    private int iterationsWithoutImprovement;
+
+    private ArrayList<Point> prev_solution;
+    private ArrayList<Point> newSolution;
 
     public AnnealingSolver(int noOfPoints, Random r, double initialTemperature, int minimalTemperature, int numberOfTrials, double coolingCoefficient) {
         super(noOfPoints, r);
@@ -23,35 +27,34 @@ public class AnnealingSolver extends TSPSolver {
 
     @Override
     public void solve() {
-
-        int iterationsWithoutImprovement = 0;
-        ArrayList<Point> prev_solution;
-        ArrayList<Point> newSolution = null;
-        ArrayList<Point> currentSolution;
-
         selectRandomTour();
-        int current_iteration = 0;
         prev_solution = new ArrayList<>(solution);
         while (initialTemperature > minimalTemperature && iterationsWithoutImprovement < numberOfTrials) {
-            current_iteration++;
-            currentSolution = new ArrayList<>(prev_solution);
-            newSolution = new ArrayList<>(swapTwoEdges(prev_solution));
-            double travelCostDifference = getTotalTourCost(newSolution) - getTotalTourCost(prev_solution);
-            if (travelCostDifference < 0 || (travelCostDifference > 0 && Math.exp(-travelCostDifference / initialTemperature) > Math.random())) {
-                iterationsWithoutImprovement = 0;
-                prev_solution = new ArrayList<>(newSolution);
-            } else {
-                newSolution = currentSolution;
-                iterationsWithoutImprovement++;
-            }
-            initialTemperature = coolingCoefficient * initialTemperature;
-            iterations = current_iteration;
+            algorithmStep();
         }
         solution = newSolution;
     }
 
     @Override
-    public void iterationStep() {
+    public void algorithmStep() {
+        ArrayList<Point> currentSolution = new ArrayList<>(prev_solution);
+        newSolution = new ArrayList<>(swapTwoEdges(prev_solution));
+        if (isABetterCandidate()) {
+            iterationsWithoutImprovement = 0;
+            prev_solution = new ArrayList<>(newSolution);
+        } else {
+            newSolution = currentSolution;
+            iterationsWithoutImprovement++;
+        }
+        performCooling();
+    }
 
+    private void performCooling() {
+        initialTemperature = coolingCoefficient * initialTemperature;
+    }
+
+    private boolean isABetterCandidate() {
+        double travelCostDifference = getTotalTourCost(newSolution) - getTotalTourCost(prev_solution);
+        return travelCostDifference < 0 || (travelCostDifference > 0 && Math.exp(-travelCostDifference / initialTemperature) > Math.random());
     }
 }

@@ -1,49 +1,41 @@
 package pl.radoslawkarwacki.solver;
 
-import pl.radoslawkarwacki.gui.Solution;
-import pl.radoslawkarwacki.gui.SolutionStep;
 import pl.radoslawkarwacki.model.Point;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * Created by radek on 25.05.16.
- */
 public class TwoOptSwapSolver extends TSPSolver {
 
-    public TwoOptSwapSolver(int noOfPoints, Random r) {
+    private int iterationsWithoutImprovement;
+    private double currentBest;
+    private int numberOfTrialsToImproveSolution;
+
+    public TwoOptSwapSolver(int noOfPoints, Random r, int numberOfTrialsToImproveSolution) {
         super(noOfPoints, r);
+        this.numberOfTrialsToImproveSolution = numberOfTrialsToImproveSolution;
     }
 
     @Override
     public void solve() {
-
-        int numberOfFailed = 0;
-        int numberOfTrials = 10000;
         selectRandomTour();
-        double currentBest = getTotalTourCost(solution);
-        ArrayList<Point> dataSet = solution;
-        SolutionStep ss = new SolutionStep(dataSet);
-        int noOfPoints = points.size();
-        System.out.println(noOfPoints);
-
-        while (numberOfFailed < numberOfTrials) {
-            ArrayList<Point> proposedSolution;
-            proposedSolution = swapTwoEdges(solution);
-            if (getTotalTourCost(proposedSolution) < currentBest) {
-                numberOfFailed = 0;
-                solution = proposedSolution;
-                currentBest = getTotalTourCost(proposedSolution);
-            } else {
-                numberOfFailed++;
-
-            }
+        currentBest = getTotalTourCost(solution);
+        while (iterationsWithoutImprovement < numberOfTrialsToImproveSolution) {
+            algorithmStep();
         }
     }
 
     @Override
-    public void iterationStep() {
-
+    public void algorithmStep() {
+        ArrayList<Point> proposedSolution;
+        proposedSolution = swapTwoEdges(solution);
+        double newTourCost = getTotalTourCost(proposedSolution);
+        if (newTourCost < currentBest) {
+            iterationsWithoutImprovement = 0;
+            solution = proposedSolution;
+            currentBest = newTourCost;
+        } else {
+            iterationsWithoutImprovement++;
+        }
     }
 }
