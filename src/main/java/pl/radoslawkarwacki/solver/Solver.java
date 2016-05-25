@@ -7,29 +7,23 @@ import pl.radoslawkarwacki.model.Point;
 import java.util.*;
 
 public class Solver {
-    //list of all points to visit
+
     private static ArrayList<Point> points = new ArrayList<>();
 
-    //adjacency matrix
     private ArrayList<ArrayList<Double>> adjMatrix = new ArrayList<>();
 
-    //found solution
-    public static ArrayList<Point> solution = new ArrayList<>();
+    public ArrayList<Point> solution = new ArrayList<>();
 
-    //visited points
     private ArrayList<Integer> visitedPoints = new ArrayList<>();
 
     //used for visualisation
-    private static Solution finalSolution = new Solution();
+    private Solution finalSolution = new Solution();
     public static int iterations;
     public Solver(int noOfPoints, Random r){
         clear();
         for (int i=0;i<noOfPoints;i++) {
             addPoint(new Point(r));
         }
-        /*for (int i=0;i<12;i++)
-            for (int j=0;j<12;j++)
-                addPoint(new Point(i*40+30,j*40+30));*/
         fillAdjacencyMatrix();
     }
 
@@ -152,10 +146,6 @@ public class Solver {
             if (deltaDist < 0 || (deltaDist > 0 && Math.exp(-deltaDist/temperature)>Math.random())){
                 iterationsWithoutImprovement = 0;
                 prev_solution=new ArrayList<>(new_solution);
-                /*if(i%1==0) {
-                    SolutionStep step = new SolutionStep(new_solution);
-                    sol.addStep(step);
-                }*/
             }
             else {
                 new_solution = current_solution;
@@ -221,7 +211,7 @@ public class Solver {
             SolutionStep ss = new SolutionStep();
             for (Point aSolution : solution) {
                 Point p = new Point(aSolution.getX(), aSolution.getY());
-                ss.addPoint(p);
+                ss.addPointToSolutionStep(p);
             }
             sol.addStep(ss);
             noOfVisited++;

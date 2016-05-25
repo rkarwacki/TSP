@@ -13,6 +13,7 @@ public class Solution {
     public static ArrayList<SolutionStep> playbackSolution = new ArrayList<>();
     private int noOfFrames;
     private static int framesTotal;
+
     public Solution(ArrayList<SolutionStep> listOfSteps, int noOfFrames){
         this.noOfFrames=noOfFrames;
         playbackSolution=listOfSteps;

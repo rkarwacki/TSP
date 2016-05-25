@@ -9,12 +9,14 @@ import java.util.ArrayList;
 public class SolutionStep{
 
     public ArrayList<Point> step = new ArrayList<>();
+
     public SolutionStep(){}
+
     public SolutionStep(ArrayList<Point> points){
         this.step = points;
     }
 
-    public void addPoint(Point p){
+    public void addPointToSolutionStep(Point p){
         step.add(p);
     }
 
