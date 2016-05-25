@@ -1,10 +1,11 @@
 package pl.radoslawkarwacki.entry;
 
 
-import pl.radoslawkarwacki.gui.Solution;
-import pl.radoslawkarwacki.solver.AnnealingSolver;
+import pl.radoslawkarwacki.gui.SolutionDrawer;
+import pl.radoslawkarwacki.solver.RecordableTSPSolver;
+import pl.radoslawkarwacki.solver.impl.AnnealingSolver;
 import pl.radoslawkarwacki.solver.TSPSolver;
-import pl.radoslawkarwacki.solver.TwoOptSwapSolver;
+import pl.radoslawkarwacki.solver.impl.TwoOptSwapSolver;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,32 +45,30 @@ public class MainFrame {
 
 
     public class TSPDrawer extends JPanel {
+
+        RecordableTSPSolver solver;
+
+        int totalFrames;
+        private int frameToDisplay = 0;
         private final int time_step = 10;
         private Timer timer;
-        private int displayNoOfSteps = 0;
-        public Solution solution = null;
-        private int noOfFrames = 0;
+        public SolutionDrawer solution = null;
 
-        private int noOfPoints = 50;
         private boolean anneal = true;
         private long seed = 1345342;
-        private double temp_start=100;
-        private double t_min = 0.00001;
-        private double lambda = 0.999999;
-        private int trials = 10000;
-        private int recordWithStep = 200;
 
         public TSPDrawer() {
             setOpaque(false);
             timer = new Timer(time_step, e -> {
-                solution = new Solution(Solution.getPlayback(),displayNoOfSteps);
-                noOfFrames = Solution.getNoOfFrames();
-                if (displayNoOfSteps<noOfFrames) {
-                    if(anneal)
-                        label1.setText("Iteration: " + displayNoOfSteps*recordWithStep +"/"+ TSPSolver.iterations + ", cost: " + Double.toString(TSPSolver.getTotalTourCost(Solution.playbackSolution.get(displayNoOfSteps).step)));
-                    else
-                        label1.setText("Iteration: " + displayNoOfSteps + ", cost: " + Double.toString(TSPSolver.getTotalTourCost(Solution.playbackSolution.get(displayNoOfSteps).step)));
-                    displayNoOfSteps++;
+                SolutionDrawer solutionDrawer = new SolutionDrawer(solver.getSolutionHistory());
+                solutionDrawer.setCurrentFrameToDraw(frameToDisplay++);
+                totalFrames = solutionDrawer.getNoOfFrames();
+                if (frameToDisplay < totalFrames) {
+//                    if(anneal)
+//                        label1.setText("Iteration: " + displayNoOfSteps*recordWithStep +"/"+ TSPSolver.iterations + ", cost: " + Double.toString(TSPSolver.getTotalTourCost(SolutionDrawer.playbackSolution.get(displayNoOfSteps).step)));
+//                    else
+//                        label1.setText("Iteration: " + displayNoOfSteps + ", cost: " + Double.toString(TSPSolver.getTotalTourCost(SolutionDrawer.playbackSolution.get(displayNoOfSteps).step)));
+//                    displayNoOfSteps++;
                     repaint();
                 }
                 else
@@ -93,15 +92,17 @@ public class MainFrame {
 
         public void startSimulation(boolean run) {
             if (run){
-                displayNoOfSteps=0;
                 tsp.removeAll();
                 Random r = new Random(seed);
-                if (anneal)
-                    new AnnealingSolver().solve();
-                else
-                    new TwoOptSwapSolver().solve();
+                if (anneal) {
+                    solver = new AnnealingSolver(30,r,100,0.1,100,0.9999);
+                    solver.solve();
+                }
+                else {
+                    solver = new TwoOptSwapSolver(30,r,100);
+                    solver.solve();
+                }
                 timer.start();
-
             }
             else {
                 timer.stop();

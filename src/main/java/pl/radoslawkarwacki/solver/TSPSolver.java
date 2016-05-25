@@ -8,14 +8,12 @@ import java.util.Random;
 
 public abstract class TSPSolver {
 
-    protected ArrayList<Point> points = new ArrayList<>();
-
+    // TODO refactor ArrayList<Point> to a wrapper class
     public ArrayList<Point> solution = new ArrayList<>();
 
     public int iterations;
 
     public TSPSolver(int noOfPoints, Random r) {
-        clear();
         for (int i = 0; i < noOfPoints; i++) {
             addPoint(new Point(r));
         }
@@ -25,26 +23,12 @@ public abstract class TSPSolver {
 
     public abstract void algorithmStep();
 
-    public void clear() {
-        points.clear();
-        solution.clear();
-    }
-
     public void addPoint(Point p) {
-        points.add(p);
+        solution.add(p);
     }
 
-    public ArrayList<Point> getPoints() {
-        ArrayList<Point> listOfPoints;
-        listOfPoints = points;
-        return listOfPoints;
-    }
-
-    protected void selectRandomTour() {
-        ArrayList<Point> randomTour;
-        randomTour = points;
-        Collections.shuffle(randomTour);
-        solution = randomTour;
+    public ArrayList<Point> getSolution() {
+        return solution;
     }
 
     public double getTotalTourCost(ArrayList<Point> points) {

@@ -1,15 +1,16 @@
-package pl.radoslawkarwacki.solver;
+package pl.radoslawkarwacki.solver.impl;
 
 import pl.radoslawkarwacki.model.Point;
+import pl.radoslawkarwacki.solver.RecordableTSPSolver;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 
-public class AnnealingSolver extends TSPSolver {
+public class AnnealingSolver extends RecordableTSPSolver {
 
     private double initialTemperature;
-    private int minimalTemperature;
+    private double minimalTemperature;
     private int numberOfTrials;
     private double coolingCoefficient;
     private int iterationsWithoutImprovement;
@@ -17,7 +18,7 @@ public class AnnealingSolver extends TSPSolver {
     private ArrayList<Point> prev_solution;
     private ArrayList<Point> newSolution;
 
-    public AnnealingSolver(int noOfPoints, Random r, double initialTemperature, int minimalTemperature, int numberOfTrials, double coolingCoefficient) {
+    public AnnealingSolver(int noOfPoints, Random r, double initialTemperature, double minimalTemperature, int numberOfTrials, double coolingCoefficient) {
         super(noOfPoints, r);
         this.initialTemperature = initialTemperature;
         this.minimalTemperature = minimalTemperature;
@@ -27,7 +28,6 @@ public class AnnealingSolver extends TSPSolver {
 
     @Override
     public void solve() {
-        selectRandomTour();
         prev_solution = new ArrayList<>(solution);
         while (initialTemperature > minimalTemperature && iterationsWithoutImprovement < numberOfTrials) {
             algorithmStep();
@@ -39,6 +39,7 @@ public class AnnealingSolver extends TSPSolver {
     public void algorithmStep() {
         ArrayList<Point> currentSolution = new ArrayList<>(prev_solution);
         newSolution = new ArrayList<>(swapTwoEdges(prev_solution));
+        recordStep();
         if (isABetterCandidate()) {
             iterationsWithoutImprovement = 0;
             prev_solution = new ArrayList<>(newSolution);
@@ -47,6 +48,11 @@ public class AnnealingSolver extends TSPSolver {
             iterationsWithoutImprovement++;
         }
         performCooling();
+    }
+
+    @Override
+    public void recordStep() {
+        solutionHistory.addStep(newSolution);
     }
 
     private void performCooling() {
