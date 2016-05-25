@@ -2,7 +2,9 @@ package pl.radoslawkarwacki.entry;
 
 
 import pl.radoslawkarwacki.gui.Solution;
-import pl.radoslawkarwacki.solver.Solver;
+import pl.radoslawkarwacki.solver.AnnealingSolver;
+import pl.radoslawkarwacki.solver.TSPSolver;
+import pl.radoslawkarwacki.solver.TwoOptSwapSolver;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,7 +35,7 @@ public class MainFrame {
         frame.add(panel);
         panel.setBackground(Color.white);
         frame.add(button1, BorderLayout.NORTH);
-        frame.add(label1,BorderLayout.SOUTH);
+        frame.add(label1, BorderLayout.SOUTH);
         button1.addActionListener(e -> tsp.startSimulation(true));
         panel.add(tsp);
         frame.pack();
@@ -64,9 +66,9 @@ public class MainFrame {
                 noOfFrames = Solution.getNoOfFrames();
                 if (displayNoOfSteps<noOfFrames) {
                     if(anneal)
-                        label1.setText("Iteration: " + displayNoOfSteps*recordWithStep +"/"+ Solver.iterations + ", cost: " + Double.toString(Solver.getTotalTourCost(Solution.playbackSolution.get(displayNoOfSteps).step)));
+                        label1.setText("Iteration: " + displayNoOfSteps*recordWithStep +"/"+ TSPSolver.iterations + ", cost: " + Double.toString(TSPSolver.getTotalTourCost(Solution.playbackSolution.get(displayNoOfSteps).step)));
                     else
-                        label1.setText("Iteration: " + displayNoOfSteps + ", cost: " + Double.toString(Solver.getTotalTourCost(Solution.playbackSolution.get(displayNoOfSteps).step)));
+                        label1.setText("Iteration: " + displayNoOfSteps + ", cost: " + Double.toString(TSPSolver.getTotalTourCost(Solution.playbackSolution.get(displayNoOfSteps).step)));
                     displayNoOfSteps++;
                     repaint();
                 }
@@ -94,11 +96,10 @@ public class MainFrame {
                 displayNoOfSteps=0;
                 tsp.removeAll();
                 Random r = new Random(seed);
-                Solver s = new Solver(noOfPoints, r);
                 if (anneal)
-                s.solveUsingSimulatedAnnealing(temp_start,t_min,lambda,trials,recordWithStep);
+                    new AnnealingSolver().solve();
                 else
-                s.solveUsing2Opt();
+                    new TwoOptSwapSolver().solve();
                 timer.start();
 
             }

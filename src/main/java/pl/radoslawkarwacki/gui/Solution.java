@@ -1,7 +1,7 @@
 package pl.radoslawkarwacki.gui;
 
 import pl.radoslawkarwacki.model.Point;
-import pl.radoslawkarwacki.solver.Solver;
+import pl.radoslawkarwacki.solver.TSPSolver;
 
 
 import java.awt.*;
@@ -18,7 +18,7 @@ public class Solution {
         this.noOfFrames=noOfFrames;
         playbackSolution=listOfSteps;
         framesTotal = playbackSolution.size();
-        points = Solver.getPoints();
+        points = TSPSolver.getPoints();
     }
 
     public static int getNoOfFrames(){
