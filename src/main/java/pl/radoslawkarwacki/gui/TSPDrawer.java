@@ -20,19 +20,18 @@ public class TSPDrawer extends JPanel {
         setLayout(new BorderLayout());
         add(statusBar, BorderLayout.SOUTH);
         setOpaque(false);
-        int playbackTimeStep = 1;
-        setupTimer(playbackTimeStep);
+        int timerTickMs = 2;
+        setupTimer(timerTickMs);
     }
 
-    private void setupTimer(int time_step) {
-        timer = new Timer(time_step, e -> displayNextSimulationStep());
+    private void setupTimer(int timeStep) {
+        timer = new Timer(timeStep, e -> displayNextSimulationStep(70));
         timer.setRepeats(true);
         timer.setCoalesce(true);
     }
 
-    private void displayNextSimulationStep() {
-        int replaySpeed = 10;
-        nextFrame += replaySpeed;
+    private void displayNextSimulationStep(int omitFrames) {
+        nextFrame += omitFrames;
         if (nextFrame < totalFrames) {
             solution.setCurrentFrameToDraw(nextFrame);
             repaint();
@@ -73,9 +72,9 @@ public class TSPDrawer extends JPanel {
     }
 
     private void initializeSolver() {
-        long seed = 1345342;
+        long seed = 12;
         Random r = new Random(seed);
-        solver = new AnnealingSolver(10,r,100,0.1,100,0.97);
+        solver = new AnnealingSolver(200,r,100,0.0001,10000,0.99999);
         solver.solve();
         solution = new SolutionDrawer(solver.getSolutionHistory());
         totalFrames = solution.getNoOfFrames();

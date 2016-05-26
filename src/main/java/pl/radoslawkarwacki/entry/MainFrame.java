@@ -10,7 +10,6 @@ public class MainFrame {
 
     public JFrame frame = new JFrame();
     public JPanel panel = new JPanel(new BorderLayout());
-    private JButton button1 = new JButton("Start");
 
     private TSPDrawer tsp;
 
@@ -19,6 +18,7 @@ public class MainFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         panel.setBackground(Color.white);
+        JButton button1 = new JButton("Start");
         frame.add(button1, BorderLayout.NORTH);
         button1.addActionListener(e -> tsp.startSimulation());
         panel.add(tsp);

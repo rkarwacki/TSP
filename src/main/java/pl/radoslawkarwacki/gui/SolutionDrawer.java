@@ -33,10 +33,6 @@ public class SolutionDrawer {
         return solutionHistory.getNumberOfFrames();
     }
 
-    public void setSolutionHistory(SolutionHistory solutionHistory) {
-        this.solutionHistory = solutionHistory;
-    }
-
     public void draw(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g.clearRect(0, 0, 1000, 600);
