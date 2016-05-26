@@ -48,13 +48,13 @@ public class MainFrame {
         public Solution solution = null;
         private int noOfFrames = 0;
 
-        private int noOfPoints = 50;
+        private int noOfPoints = 20;
         private boolean anneal = true;
         private long seed = 1345342;
         private double temp_start=100;
-        private double t_min = 0.00001;
-        private double lambda = 0.999999;
-        private int trials = 10000;
+        private double t_min = 0.001;
+        private double lambda = 0.999;
+        private int trials = 1000;
         private int recordWithStep = 200;
 
         public TSPDrawer() {
