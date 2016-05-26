@@ -16,7 +16,7 @@ public class AnnealingSolver extends RecordableTSPSolver {
     private double coolingCoefficient;
     private int iterationsWithoutImprovement;
 
-    private ArrayList<Point> prev_solution;
+    private ArrayList<Point> prevSolution;
     private ArrayList<Point> newSolution;
 
     public AnnealingSolver(int noOfPoints, Random r, double initialTemperature, double minimalTemperature, int numberOfTrials, double coolingCoefficient) {
@@ -29,23 +29,26 @@ public class AnnealingSolver extends RecordableTSPSolver {
 
     @Override
     public void solve() {
-        prev_solution = new ArrayList<>(solution);
-        while (initialTemperature > minimalTemperature && iterationsWithoutImprovement < numberOfTrials) {
+        prevSolution = solution;
+        newSolution = prevSolution;
+        while (solutionCanBeImproved()) {
             algorithmStep();
         }
         solution = newSolution;
     }
 
+    private boolean solutionCanBeImproved() {
+        return initialTemperature > minimalTemperature && iterationsWithoutImprovement < numberOfTrials;
+    }
+
     @Override
     public void algorithmStep() {
-        ArrayList<Point> currentSolution = new ArrayList<>(prev_solution);
-        newSolution = new ArrayList<>(TSPUtils.swapTwoEdges(prev_solution));
-        recordStep();
+        newSolution = TSPUtils.swapTwoEdges(prevSolution);
         if (isABetterCandidate()) {
+            recordStep();
             iterationsWithoutImprovement = 0;
-            prev_solution = new ArrayList<>(newSolution);
+            prevSolution = newSolution;
         } else {
-            newSolution = currentSolution;
             iterationsWithoutImprovement++;
         }
         performCooling();
@@ -61,7 +64,11 @@ public class AnnealingSolver extends RecordableTSPSolver {
     }
 
     private boolean isABetterCandidate() {
-        double travelCostDifference = TSPUtils.getTotalTourCost(newSolution) - TSPUtils.getTotalTourCost(prev_solution);
+        double travelCostDifference = getTravelCostDifference();
         return travelCostDifference < 0 || (travelCostDifference > 0 && Math.exp(-travelCostDifference / initialTemperature) > Math.random());
+    }
+
+    private double getTravelCostDifference() {
+        return TSPUtils.getTotalTourCost(newSolution) - TSPUtils.getTotalTourCost(prevSolution);
     }
 }

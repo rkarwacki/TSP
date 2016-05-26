@@ -3,7 +3,6 @@ package pl.radoslawkarwacki.solver;
 import pl.radoslawkarwacki.model.Point;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 public abstract class TSPSolver {

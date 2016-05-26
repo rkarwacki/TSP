@@ -74,7 +74,7 @@ public class TSPDrawer extends JPanel {
     private void initializeSolver() {
         long seed = 12;
         Random r = new Random(seed);
-        solver = new AnnealingSolver(200,r,100,0.0001,10000,0.99999);
+        solver = new AnnealingSolver(100,r,100,0.0001,10000,0.99999);
         solver.solve();
         solution = new SolutionDrawer(solver.getSolutionHistory());
         totalFrames = solution.getNoOfFrames();
