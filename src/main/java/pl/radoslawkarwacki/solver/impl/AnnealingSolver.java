@@ -2,6 +2,7 @@ package pl.radoslawkarwacki.solver.impl;
 
 import pl.radoslawkarwacki.model.Point;
 import pl.radoslawkarwacki.solver.RecordableTSPSolver;
+import pl.radoslawkarwacki.utils.TSPUtils;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -38,7 +39,7 @@ public class AnnealingSolver extends RecordableTSPSolver {
     @Override
     public void algorithmStep() {
         ArrayList<Point> currentSolution = new ArrayList<>(prev_solution);
-        newSolution = new ArrayList<>(swapTwoEdges(prev_solution));
+        newSolution = new ArrayList<>(TSPUtils.swapTwoEdges(prev_solution));
         recordStep();
         if (isABetterCandidate()) {
             iterationsWithoutImprovement = 0;
@@ -60,7 +61,7 @@ public class AnnealingSolver extends RecordableTSPSolver {
     }
 
     private boolean isABetterCandidate() {
-        double travelCostDifference = getTotalTourCost(newSolution) - getTotalTourCost(prev_solution);
+        double travelCostDifference = TSPUtils.getTotalTourCost(newSolution) - TSPUtils.getTotalTourCost(prev_solution);
         return travelCostDifference < 0 || (travelCostDifference > 0 && Math.exp(-travelCostDifference / initialTemperature) > Math.random());
     }
 }

@@ -2,6 +2,7 @@ package pl.radoslawkarwacki.gui;
 
 import pl.radoslawkarwacki.model.Point;
 import pl.radoslawkarwacki.model.SolutionHistory;
+import pl.radoslawkarwacki.utils.TSPUtils;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -17,6 +18,10 @@ public class SolutionDrawer {
     public SolutionDrawer(SolutionHistory solutionHistory){
         this.solutionHistory = solutionHistory;
         points = solutionHistory.getStep(0);
+    }
+
+    public double getCostAtFrame(int frameNumber){
+        return TSPUtils.getTotalTourCost(solutionHistory.getStep(frameNumber));
     }
 
     public void setCurrentFrameToDraw(int currentFrameToDraw) {

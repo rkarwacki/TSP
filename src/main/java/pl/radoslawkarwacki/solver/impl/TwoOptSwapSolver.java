@@ -2,6 +2,7 @@ package pl.radoslawkarwacki.solver.impl;
 
 import pl.radoslawkarwacki.model.Point;
 import pl.radoslawkarwacki.solver.RecordableTSPSolver;
+import pl.radoslawkarwacki.utils.TSPUtils;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,7 +21,7 @@ public class TwoOptSwapSolver extends RecordableTSPSolver {
 
     @Override
     public void solve() {
-        currentBest = getTotalTourCost(solution);
+        currentBest = TSPUtils.getTotalTourCost(solution);
         while (iterationsWithoutImprovement < numberOfTrialsToImproveSolution) {
             algorithmStep();
         }
@@ -28,9 +29,9 @@ public class TwoOptSwapSolver extends RecordableTSPSolver {
 
     @Override
     public void algorithmStep() {
-        proposedSolution = swapTwoEdges(solution);
+        proposedSolution = TSPUtils.swapTwoEdges(solution);
         recordStep();
-        double newTourCost = getTotalTourCost(proposedSolution);
+        double newTourCost = TSPUtils.getTotalTourCost(proposedSolution);
         if (newTourCost < currentBest) {
             iterationsWithoutImprovement = 0;
             solution = proposedSolution;

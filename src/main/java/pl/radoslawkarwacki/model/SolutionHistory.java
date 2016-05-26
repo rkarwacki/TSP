@@ -1,7 +1,5 @@
 package pl.radoslawkarwacki.model;
 
-import pl.radoslawkarwacki.model.Point;
-
 import java.util.ArrayList;
 
 public class SolutionHistory {
