@@ -75,14 +75,7 @@ public class TSPDrawer extends JPanel {
     private void initializeSolver() {
         long seed = 1345342;
         Random r = new Random(seed);
-        boolean anneal = true;
-        if (anneal) {
-            solver = new AnnealingSolver(10,r,100,0.1,100,0.97);
-            solver.solve();
-        }
-        else {
-            solver = new TwoOptSwapSolver(30,r,100);
-            solver.solve();
-        }
+        solver = new AnnealingSolver(10,r,100,0.1,100,0.97);
+        solver.solve();
     }
 }
