@@ -2,6 +2,7 @@ package pl.radoslawkarwacki.gui;
 
 import pl.radoslawkarwacki.solver.RecordableTSPSolver;
 import pl.radoslawkarwacki.solver.impl.AnnealingSolver;
+import pl.radoslawkarwacki.solver.impl.TwoOptSwapSolver;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,7 +26,7 @@ public class TSPDrawer extends JPanel {
     }
 
     private void setupTimer(int timeStep) {
-        timer = new Timer(timeStep, e -> displayNextSimulationStep(70));
+        timer = new Timer(timeStep, e -> displayNextSimulationStep(10));
         timer.setRepeats(true);
         timer.setCoalesce(true);
     }
@@ -72,9 +73,11 @@ public class TSPDrawer extends JPanel {
     }
 
     private void initializeSolver() {
-        long seed = 12;
+        long seed = 1352;
         Random r = new Random(seed);
-        solver = new AnnealingSolver(100,r,100,0.0001,10000,0.99999);
+        //TODO button to switch algorithms
+//        solver = new AnnealingSolver(100,r,100,0.0001,10000,0.99999);
+        solver = new TwoOptSwapSolver(100,r,10000);
         solver.solve();
         solution = new SolutionDrawer(solver.getSolutionHistory());
         totalFrames = solution.getNoOfFrames();
