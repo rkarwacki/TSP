@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class SolutionDrawer {
 
     private SolutionHistory solutionHistory;
+
     private SingleStepDrawer singleStepDrawer = new SingleStepDrawer();
     private int currentFrameToDraw;
     private ArrayList<Point> points;
@@ -30,6 +31,10 @@ public class SolutionDrawer {
 
     public int getNoOfFrames(){
         return solutionHistory.getNumberOfFrames();
+    }
+
+    public void setSolutionHistory(SolutionHistory solutionHistory) {
+        this.solutionHistory = solutionHistory;
     }
 
     public void draw(Graphics g) {
