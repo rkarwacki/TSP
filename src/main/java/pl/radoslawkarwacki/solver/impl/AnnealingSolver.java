@@ -41,7 +41,6 @@ public class AnnealingSolver extends RecordableTSPSolver {
         return initialTemperature > minimalTemperature && iterationsWithoutImprovement < numberOfTrials;
     }
 
-    @Override
     public void algorithmStep() {
         newSolution = TSPUtils.swapTwoEdges(prevSolution);
         if (isABetterCandidate()) {

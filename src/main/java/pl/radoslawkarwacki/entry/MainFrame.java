@@ -15,7 +15,7 @@ public class MainFrame {
 
     public MainFrame() {
         tsp = new TSPDrawer();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
         panel.setBackground(Color.white);
         JButton button1 = new JButton("Start");

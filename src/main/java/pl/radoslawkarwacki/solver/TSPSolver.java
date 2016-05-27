@@ -18,8 +18,6 @@ public abstract class TSPSolver {
 
     public abstract void solve();
 
-    public abstract void algorithmStep();
-
     public void addPoint(Point p) {
         solution.add(p);
     }
