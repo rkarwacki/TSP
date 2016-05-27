@@ -86,7 +86,7 @@ public class TSPDrawer extends JPanel {
         long seed = 1353;
         Random r = new Random(seed);
         //TODO button to switch algorithms
-        solver = new AnnealingSolver(200,r,100,0.0001,50000,0.99999);
+        solver = new AnnealingSolver(300,r,100,0.00001,50000,0.999999);
 //        solver = new TwoOptSwapSolver(200,r,100000);
         solver.solve();
         solution = new SolutionDrawer(solver.getSolutionHistory());

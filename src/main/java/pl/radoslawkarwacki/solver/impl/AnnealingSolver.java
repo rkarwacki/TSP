@@ -10,55 +10,58 @@ import java.util.Random;
 
 public class AnnealingSolver extends RecordableTSPSolver {
 
+    private ArrayList<Point> currentSolution;
+    private ArrayList<Point> newSolution;
+    private ArrayList<Point> finalSolution;
+
     private double initialTemperature;
     private double minimalTemperature;
-    private int numberOfTrials;
+    private int maximumNumberOfTrials;
     private double coolingCoefficient;
     private int iterationsWithoutImprovement;
 
-    private ArrayList<Point> prevSolution;
-    private ArrayList<Point> newSolution;
-
-    public AnnealingSolver(int noOfPoints, Random r, double initialTemperature, double minimalTemperature, int numberOfTrials, double coolingCoefficient) {
+    public AnnealingSolver(int noOfPoints, Random r, double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient) {
         super(noOfPoints, r);
         this.initialTemperature = initialTemperature;
         this.minimalTemperature = minimalTemperature;
-        this.numberOfTrials = numberOfTrials;
+        this.maximumNumberOfTrials = maximumNumberOfTrials;
+        this.coolingCoefficient = coolingCoefficient;
+    }
+
+    public AnnealingSolver(ArrayList<Point> points, double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient){
+        super(points);
+        this.initialTemperature = initialTemperature;
+        this.minimalTemperature = minimalTemperature;
+        this.maximumNumberOfTrials = maximumNumberOfTrials;
         this.coolingCoefficient = coolingCoefficient;
     }
 
     @Override
     public void solve() {
-        prevSolution = solution;
-        newSolution = prevSolution;
+        currentSolution = initialSetOfPoints;
         while (solutionCanBeImproved()) {
             algorithmStep();
         }
-        solution = newSolution;
-    }
-
-    private boolean solutionCanBeImproved() {
-        return initialTemperature > minimalTemperature && iterationsWithoutImprovement < numberOfTrials;
+        finalSolution = currentSolution;
     }
 
     public void algorithmStep() {
-        newSolution = TSPUtils.swapTwoEdges(prevSolution);
+        newSolution = TSPUtils.swapTwoEdges(currentSolution);
         if (isABetterCandidate()) {
-            recordStep();
+            recordStep(newSolution);
             iterationsWithoutImprovement = 0;
-            prevSolution = newSolution;
+            currentSolution = newSolution;
         } else {
             iterationsWithoutImprovement++;
         }
-        performCooling();
+        lowerTemperature();
     }
 
-    @Override
-    public void recordStep() {
-        solutionHistory.addStep(newSolution);
+    private boolean solutionCanBeImproved() {
+        return initialTemperature > minimalTemperature && iterationsWithoutImprovement < maximumNumberOfTrials;
     }
 
-    private void performCooling() {
+    private void lowerTemperature() {
         initialTemperature = coolingCoefficient * initialTemperature;
     }
 
@@ -68,6 +71,10 @@ public class AnnealingSolver extends RecordableTSPSolver {
     }
 
     private double getTravelCostDifference() {
-        return TSPUtils.getTotalTourCost(newSolution) - TSPUtils.getTotalTourCost(prevSolution);
+        return TSPUtils.getTotalTourCost(newSolution) - TSPUtils.getTotalTourCost(currentSolution);
+    }
+
+    public ArrayList<Point> getFinalSolution() {
+        return finalSolution;
     }
 }

@@ -21,19 +21,19 @@ public class TwoOptSwapSolver extends RecordableTSPSolver {
 
     @Override
     public void solve() {
-        currentBest = TSPUtils.getTotalTourCost(solution);
+        currentBest = TSPUtils.getTotalTourCost(initialSetOfPoints);
         while (iterationsWithoutImprovement < numberOfTrialsToImproveSolution) {
             algorithmStep();
         }
     }
 
     public void algorithmStep() {
-        proposedSolution = TSPUtils.swapTwoEdges(solution);
+        proposedSolution = TSPUtils.swapTwoEdges(initialSetOfPoints);
         double newTourCost = TSPUtils.getTotalTourCost(proposedSolution);
         if (newTourCost < currentBest) {
             recordStep();
             iterationsWithoutImprovement = 0;
-            solution = proposedSolution;
+            initialSetOfPoints = proposedSolution;
             currentBest = newTourCost;
         } else {
             iterationsWithoutImprovement++;

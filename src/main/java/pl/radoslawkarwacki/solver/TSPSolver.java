@@ -7,8 +7,9 @@ import java.util.Random;
 
 public abstract class TSPSolver {
 
-    // TODO refactor ArrayList<Point> to a wrapper class
-    public ArrayList<Point> solution = new ArrayList<>();
+    protected ArrayList<Point> initialSetOfPoints = new ArrayList<>();
+
+    public abstract void solve();
 
     public TSPSolver(int noOfPoints, Random r) {
         for (int i = 0; i < noOfPoints; i++) {
@@ -16,10 +17,12 @@ public abstract class TSPSolver {
         }
     }
 
-    public abstract void solve();
+    public TSPSolver(ArrayList<Point> points) {
+        initialSetOfPoints = points;
+    }
 
     public void addPoint(Point p) {
-        solution.add(p);
+        initialSetOfPoints.add(p);
     }
 
 }
