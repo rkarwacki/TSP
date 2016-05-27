@@ -24,6 +24,5 @@ public abstract class TSPSolver {
     public void addPoint(Point p) {
         initialSetOfPoints.add(p);
     }
-
 }
 

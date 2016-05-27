@@ -10,6 +10,7 @@ public class Point {
     public double getX() {
         return x;
     }
+
     public double getY() {
         return y;
     }
@@ -19,12 +20,12 @@ public class Point {
         this.y = y;
     }
 
-    public Point(Random r, int rangeX, int rangeY){
-        this.x=r.nextInt(rangeX);
-        this.y=r.nextInt(rangeY);
+    public Point(Random r, int rangeX, int rangeY) {
+        this.x = r.nextInt(rangeX);
+        this.y = r.nextInt(rangeY);
     }
 
     public double calculateDistanceToPoint(Point p) {
-        return Math.sqrt((this.x-p.x)*(this.x-p.x) + (this.y-p.y)*(this.y-p.y));
+        return Math.sqrt((this.x - p.x) * (this.x - p.x) + (this.y - p.y) * (this.y - p.y));
     }
 }

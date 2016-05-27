@@ -46,7 +46,7 @@ public class AnnealingSolver extends RecordableTSPSolver {
     }
 
     public void algorithmStep() {
-        newSolution = TSPUtils.swapTwoEdges(currentSolution);
+        newSolution = TSPUtils.swapTwoRandomEdges(currentSolution);
         if (isABetterCandidate()) {
             recordStep(newSolution);
             iterationsWithoutImprovement = 0;

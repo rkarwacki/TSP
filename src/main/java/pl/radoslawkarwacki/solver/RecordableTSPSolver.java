@@ -18,7 +18,7 @@ public abstract class RecordableTSPSolver extends TSPSolver {
         super(points);
     }
 
-    public void recordStep(ArrayList<Point> currentSolution){
+    protected void recordStep(ArrayList<Point> currentSolution){
         solutionHistory.addStep(currentSolution);
     }
 

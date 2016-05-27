@@ -28,7 +28,7 @@ public class TwoOptSwapSolver extends RecordableTSPSolver {
     }
 
     public void algorithmStep() {
-        proposedSolution = TSPUtils.swapTwoEdges(initialSetOfPoints);
+        proposedSolution = TSPUtils.swapTwoRandomEdges(initialSetOfPoints);
         double newTourCost = TSPUtils.getTotalTourCost(proposedSolution);
         if (newTourCost < currentBest) {
             recordStep(proposedSolution);
