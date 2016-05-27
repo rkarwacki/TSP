@@ -11,9 +11,9 @@ public abstract class TSPSolver {
 
     public abstract void solve();
 
-    public TSPSolver(int noOfPoints, Random r) {
+    public TSPSolver(int noOfPoints, Random r, int rangeX, int rangeY) {
         for (int i = 0; i < noOfPoints; i++) {
-            addPoint(new Point(r));
+            addPoint(new Point(r, rangeX, rangeY));
         }
     }
 

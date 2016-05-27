@@ -84,10 +84,23 @@ public class TSPDrawer extends JPanel {
 
     private void initializeSolver() {
         long seed = 1353;
-        Random r = new Random(seed);
-        //TODO button to switch algorithms
-        solver = new AnnealingSolver(300,r,100,0.00001,50000,0.999999);
-//        solver = new TwoOptSwapSolver(200,r,100000);
+        int numberOfCities = 100;
+        Random random = new Random(seed);
+        int pointsRangeX = 1000;
+        int pointsRangeY = 600;
+        int initialTemperature = 100;
+        double minimalTemperature = 0.0001;
+        int numberOfTrials = 10000;
+        double coolingCoefficient = 0.999;
+
+        solver = new AnnealingSolver(   numberOfCities,
+                                        random,
+                                        pointsRangeX,
+                                        pointsRangeY,
+                                        initialTemperature,
+                                        minimalTemperature,
+                                        numberOfTrials,
+                                        coolingCoefficient);
         solver.solve();
         solution = new SolutionDrawer(solver.getSolutionHistory());
         totalFrames = solution.getNoOfFrames();

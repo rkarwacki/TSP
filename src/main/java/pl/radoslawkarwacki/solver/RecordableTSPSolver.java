@@ -10,8 +10,8 @@ public abstract class RecordableTSPSolver extends TSPSolver {
 
     protected SolutionHistory solutionHistory = new SolutionHistory();
 
-    public RecordableTSPSolver(int noOfPoints, Random r) {
-        super(noOfPoints, r);
+    public RecordableTSPSolver(int noOfPoints, Random r, int rangeX, int rangeY) {
+        super(noOfPoints, r, rangeX, rangeY);
     }
 
     public RecordableTSPSolver(ArrayList<Point> points) {

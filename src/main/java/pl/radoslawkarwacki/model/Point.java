@@ -19,14 +19,9 @@ public class Point {
         this.y = y;
     }
 
-    public Point(Random r){
-        x=r.nextInt(1000);
-        y=r.nextInt(600);
-    }
-
-    public Point(Random r, int RangeX, int RangeY){
-        this.x=r.nextInt(RangeX);
-        this.y=r.nextInt(RangeY);
+    public Point(Random r, int rangeX, int rangeY){
+        this.x=r.nextInt(rangeX);
+        this.y=r.nextInt(rangeY);
     }
 
     public double calculateDistanceToPoint(Point p) {
