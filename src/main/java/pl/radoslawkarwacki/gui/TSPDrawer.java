@@ -9,7 +9,6 @@ import pl.radoslawkarwacki.solver.impl.TwoOptSwapSolver;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Random;
 
 public class TSPDrawer extends JPanel {
@@ -54,7 +53,7 @@ public class TSPDrawer extends JPanel {
 
     private void updateStatusBarWithCurrentFrameAndCostData() {
         statusBar.setText("Iteration: " + (nextFrame + 1) + "/" + totalFrames + ", cost: " + solution.getCostAtFrame(nextFrame));
-        series1.add(nextFrame, solution.getCostAtFrame(nextFrame));
+        series1.add(nextFrame,solution.getCostAtFrame(nextFrame));
     }
 
     @Override
@@ -85,22 +84,19 @@ public class TSPDrawer extends JPanel {
 
     private void initializeSolver() {
         long seed = 1353;
-        int numberOfCities = 10;
+        int numberOfCities = 100;
         Random random = new Random(seed);
         int pointsRangeX = 1000;
         int pointsRangeY = 600;
         int initialTemperature = 100;
-        double minimalTemperature = 0.0000001;
-        int numberOfTrials = 500000;
-        double coolingCoefficient = 0.9999999;
+        double minimalTemperature = 0.0001;
+        int numberOfTrials = 10000;
+        double coolingCoefficient = 0.999;
 
-        ArrayList<pl.radoslawkarwacki.model.Point> p = new ArrayList<>();
-        for (int i = 10; i < 600; i+=30) {
-            for (int j = 10; j < 600; j += 30) {
-                p.add(new pl.radoslawkarwacki.model.Point((double)i,(double)j));
-            }
-        }
-        solver = new AnnealingSolver(   p,
+        solver = new AnnealingSolver(   numberOfCities,
+                                        random,
+                                        pointsRangeX,
+                                        pointsRangeY,
                                         initialTemperature,
                                         minimalTemperature,
                                         numberOfTrials,

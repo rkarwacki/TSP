@@ -22,14 +22,15 @@ public class AnnealingSolver extends RecordableTSPSolver {
 
     public AnnealingSolver(int noOfPoints, Random r, int rangeX, int rangeY, double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient) {
         super(noOfPoints, r, rangeX, rangeY);
-        this.initialTemperature = initialTemperature;
-        this.minimalTemperature = minimalTemperature;
-        this.maximumNumberOfTrials = maximumNumberOfTrials;
-        this.coolingCoefficient = coolingCoefficient;
+        initializeFields(initialTemperature, minimalTemperature, maximumNumberOfTrials, coolingCoefficient);
     }
 
     public AnnealingSolver(ArrayList<Point> points, double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient){
         super(points);
+        initializeFields(initialTemperature, minimalTemperature, maximumNumberOfTrials, coolingCoefficient);
+    }
+
+    private void initializeFields(double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient) {
         this.initialTemperature = initialTemperature;
         this.minimalTemperature = minimalTemperature;
         this.maximumNumberOfTrials = maximumNumberOfTrials;
