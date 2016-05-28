@@ -14,19 +14,17 @@ public class TSPDrawer extends JPanel {
     private int frameToDisplay;
     private Timer timer;
     private SolutionDrawer solution = null;
-    private int replaySpeed = 10;
     private JLabel statusBar = new JLabel(" ");
     private int nextFrame;
     private ChartDataSet chartDataSet = new ChartDataSet();
     private XYSeries series1 = new XYSeries("TSP");
 
-    public TSPDrawer(SolutionHistory history) {
+    public TSPDrawer(SolutionHistory history, int delayMs, int replaySpeed) {
         setLayout(new BorderLayout());
         add(statusBar, BorderLayout.SOUTH);
         setOpaque(false);
 
-        int time_step = 1;
-        timer = new Timer(time_step, e -> {
+        timer = new Timer(delayMs, e -> {
             solution = new SolutionDrawer(history);
             nextFrame = frameToDisplay+=replaySpeed;
             totalFrames = solution.getNoOfFrames();
