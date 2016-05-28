@@ -1,36 +1,26 @@
 package pl.radoslawkarwacki.solver.impl;
 
 import pl.radoslawkarwacki.model.Point;
-import pl.radoslawkarwacki.solver.RecordableTSPSolver;
-import pl.radoslawkarwacki.utils.TSPUtils;
+import pl.radoslawkarwacki.solver.TSPUseCase;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 
-public class AnnealingSolver extends RecordableTSPSolver {
+public class AnnealingSolver implements TSPUseCase {
 
-    private ArrayList<Point> currentSolution;
-    private ArrayList<Point> newSolution;
-    private ArrayList<Point> finalSolution;
+    private List<Point> currentSolution;
+    private List<Point> newSolution;
+    private List<Point> finalSolution;
 
     private double initialTemperature;
     private double minimalTemperature;
     private int maximumNumberOfTrials;
     private double coolingCoefficient;
-    private int iterationsWithoutImprovement;
+    private List<Point> initialPoints;
 
-    public AnnealingSolver(int noOfPoints, Random r, int rangeX, int rangeY, double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient) {
-        super(noOfPoints, r, rangeX, rangeY);
-        initializeFields(initialTemperature, minimalTemperature, maximumNumberOfTrials, coolingCoefficient);
-    }
 
-    public AnnealingSolver(ArrayList<Point> points, double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient){
-        super(points);
-        initializeFields(initialTemperature, minimalTemperature, maximumNumberOfTrials, coolingCoefficient);
-    }
-
-    private void initializeFields(double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient) {
+    public AnnealingSolver(List<Point> initialPoints, double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient) {
+        this.initialPoints = initialPoints;
         this.initialTemperature = initialTemperature;
         this.minimalTemperature = minimalTemperature;
         this.maximumNumberOfTrials = maximumNumberOfTrials;
@@ -38,44 +28,28 @@ public class AnnealingSolver extends RecordableTSPSolver {
     }
 
     @Override
-    public void solve() {
-        currentSolution = initialSetOfPoints;
-        while (solutionCanBeImproved()) {
-            algorithmStep();
-        }
-        finalSolution = currentSolution;
-    }
-
-    public void algorithmStep() {
-        newSolution = TSPUtils.swapTwoRandomEdges(currentSolution);
-        if (isABetterCandidate()) {
-            recordStep(newSolution);
-            iterationsWithoutImprovement = 0;
-            currentSolution = newSolution;
-        } else {
-            iterationsWithoutImprovement++;
-        }
+    public void useImprovement(List<Point> points) {
         lowerTemperature();
     }
 
-    private boolean solutionCanBeImproved() {
+
+    @Override
+    public boolean solutionCanBeImproved(int iterationsWithoutImprovement) {
         return initialTemperature > minimalTemperature && iterationsWithoutImprovement < maximumNumberOfTrials;
     }
+
 
     private void lowerTemperature() {
         initialTemperature = coolingCoefficient * initialTemperature;
     }
 
-    private boolean isABetterCandidate() {
-        double travelCostDifference = getTravelCostDifference();
+    @Override
+    public boolean isABetterCandidate(double travelCostDifference) {
         return travelCostDifference < 0 || (travelCostDifference > 0 && Math.exp(-travelCostDifference / initialTemperature) > Math.random());
     }
 
-    private double getTravelCostDifference() {
-        return TSPUtils.getTotalTourCost(newSolution) - TSPUtils.getTotalTourCost(currentSolution);
-    }
-
-    public ArrayList<Point> getFinalSolution() {
-        return finalSolution;
+    @Override
+    public List<Point> getInitialPoints() {
+        return this.initialPoints;
     }
 }

@@ -2,11 +2,11 @@ package pl.radoslawkarwacki.gui;
 
 import pl.radoslawkarwacki.model.Point;
 import pl.radoslawkarwacki.model.SolutionHistory;
-import pl.radoslawkarwacki.utils.TSPUtils;
+import pl.radoslawkarwacki.solver.TSPSolver;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
+import java.util.List;
 
 public class SolutionDrawer {
 
@@ -14,7 +14,7 @@ public class SolutionDrawer {
 
     private SingleStepDrawer singleStepDrawer = new SingleStepDrawer();
     private int currentFrameToDraw;
-    private ArrayList<Point> points;
+    private List<Point> points;
 
     public SolutionDrawer(SolutionHistory solutionHistory){
         this.solutionHistory = solutionHistory;
@@ -22,7 +22,7 @@ public class SolutionDrawer {
     }
 
     public double getCostAtFrame(int frameNumber){
-        return TSPUtils.getTotalTourCost(solutionHistory.getStep(frameNumber));
+        return TSPSolver.getTotalTourCost(solutionHistory.getStep(frameNumber));
     }
 
     public void setCurrentFrameToDraw(int currentFrameToDraw) {

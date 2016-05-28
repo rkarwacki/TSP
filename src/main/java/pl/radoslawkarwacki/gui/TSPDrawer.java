@@ -3,57 +3,54 @@ package pl.radoslawkarwacki.gui;
 import org.jfree.data.xy.XYSeries;
 import pl.radoslawkarwacki.chart.ChartDataSet;
 import pl.radoslawkarwacki.chart.LineChart;
-import pl.radoslawkarwacki.solver.RecordableTSPSolver;
-import pl.radoslawkarwacki.solver.impl.AnnealingSolver;
-import pl.radoslawkarwacki.solver.impl.TwoOptSwapSolver;
+import pl.radoslawkarwacki.model.SolutionHistory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
 
 public class TSPDrawer extends JPanel {
 
-    private RecordableTSPSolver solver;
     private int totalFrames;
+    private int frameToDisplay;
     private Timer timer;
     private SolutionDrawer solution = null;
+    private int replaySpeed = 10;
     private JLabel statusBar = new JLabel(" ");
     private int nextFrame;
     private ChartDataSet chartDataSet = new ChartDataSet();
-    private  XYSeries series1 = new XYSeries("TSP");
+    private XYSeries series1 = new XYSeries("TSP");
 
-    public TSPDrawer() {
+    public TSPDrawer(SolutionHistory history) {
         setLayout(new BorderLayout());
         add(statusBar, BorderLayout.SOUTH);
         setOpaque(false);
-        int timerTickMs = 1;
-        setupTimer(timerTickMs);
-    }
 
-    private void setupTimer(int timeStep) {
-        timer = new Timer(timeStep, e -> displayNextSimulationStep(5));
+        int time_step = 1;
+        timer = new Timer(time_step, e -> {
+            solution = new SolutionDrawer(history);
+            nextFrame = frameToDisplay+=replaySpeed;
+            totalFrames = solution.getNoOfFrames();
+            if (nextFrame < totalFrames) {
+                solution.setCurrentFrameToDraw(nextFrame);
+                repaint();
+            }
+            else {
+                nextFrame = totalFrames - 1;
+                solution.setCurrentFrameToDraw(nextFrame);
+                repaint();
+                stopSimulation();
+            }
+            updateStatusBarWithCurrentFrameAndCostData();
+        });
+
         timer.setRepeats(true);
         timer.setCoalesce(true);
     }
 
-    private void displayNextSimulationStep(int omitFrames) {
-        nextFrame += omitFrames;
-        if (nextFrame < totalFrames) {
-            solution.setCurrentFrameToDraw(nextFrame);
-            repaint();
-        }
-        else {
-            nextFrame = totalFrames - 1;
-            solution.setCurrentFrameToDraw(nextFrame);
-            repaint();
-            stopSimulation();
-        }
-        updateStatusBarWithCurrentFrameAndCostData();
-    }
 
     private void updateStatusBarWithCurrentFrameAndCostData() {
         statusBar.setText("Iteration: " + (nextFrame + 1) + "/" + totalFrames + ", cost: " + solution.getCostAtFrame(nextFrame));
-        series1.add(nextFrame,solution.getCostAtFrame(nextFrame));
+        series1.add(nextFrame, solution.getCostAtFrame(nextFrame));
     }
 
     @Override
@@ -77,32 +74,7 @@ public class TSPDrawer extends JPanel {
     }
 
     public void startSimulation() {
-        nextFrame = 0;
-        initializeSolver();
+        frameToDisplay = 0;
         timer.start();
-    }
-
-    private void initializeSolver() {
-        long seed = 1353;
-        int numberOfCities = 100;
-        Random random = new Random(seed);
-        int pointsRangeX = 1000;
-        int pointsRangeY = 600;
-        int initialTemperature = 100;
-        double minimalTemperature = 0.0001;
-        int numberOfTrials = 10000;
-        double coolingCoefficient = 0.999;
-
-        solver = new AnnealingSolver(   numberOfCities,
-                                        random,
-                                        pointsRangeX,
-                                        pointsRangeY,
-                                        initialTemperature,
-                                        minimalTemperature,
-                                        numberOfTrials,
-                                        coolingCoefficient);
-        solver.solve();
-        solution = new SolutionDrawer(solver.getSolutionHistory());
-        totalFrames = solution.getNoOfFrames();
     }
 }
