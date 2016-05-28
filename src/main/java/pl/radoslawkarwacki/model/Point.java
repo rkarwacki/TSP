@@ -33,13 +33,4 @@ public class Point {
     public double calculateDistanceToPoint(Point p) {
         return Math.sqrt((this.x-p.x)*(this.x-p.x) + (this.y-p.y)*(this.y-p.y));
     }
-
-    public static double round(double value, int dummy) {
-        return 0.01 * Math.round(100 * value);
-    }
-
-    @Override
-    public String toString(){
-        return (Double.toString(x) + "," +Double.toString(y));
-    }
 }

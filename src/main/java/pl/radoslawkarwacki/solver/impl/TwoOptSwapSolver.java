@@ -1,48 +1,37 @@
 package pl.radoslawkarwacki.solver.impl;
 
 import pl.radoslawkarwacki.model.Point;
-import pl.radoslawkarwacki.solver.RecordableTSPSolver;
-import pl.radoslawkarwacki.utils.TSPUtils;
+import pl.radoslawkarwacki.solver.TSPUseCase;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
-public class TwoOptSwapSolver extends RecordableTSPSolver {
+public class TwoOptSwapSolver implements TSPUseCase {
 
-    private int iterationsWithoutImprovement;
-    private double currentBest;
-    private int numberOfTrialsToImproveSolution;
-    private ArrayList<Point> proposedSolution;
+    private List<Point> initialPoints;
+    private int maximumNumberOfTrials;
 
-    public TwoOptSwapSolver(int noOfPoints, Random r, int numberOfTrialsToImproveSolution) {
-        super(noOfPoints, r);
-        this.numberOfTrialsToImproveSolution = numberOfTrialsToImproveSolution;
+    public TwoOptSwapSolver(List<Point> initialPoints, int maximumNumberOfTrials) {
+        this.initialPoints = initialPoints;
+        this.maximumNumberOfTrials = maximumNumberOfTrials;
     }
 
     @Override
-    public void solve() {
-        currentBest = TSPUtils.getTotalTourCost(solution);
-        while (iterationsWithoutImprovement < numberOfTrialsToImproveSolution) {
-            algorithmStep();
-        }
+    public List<Point> getInitialPoints() {
+        return this.initialPoints;
     }
 
     @Override
-    public void algorithmStep() {
-        proposedSolution = TSPUtils.swapTwoEdges(solution);
-        recordStep();
-        double newTourCost = TSPUtils.getTotalTourCost(proposedSolution);
-        if (newTourCost < currentBest) {
-            iterationsWithoutImprovement = 0;
-            solution = proposedSolution;
-            currentBest = newTourCost;
-        } else {
-            iterationsWithoutImprovement++;
-        }
+    public void useImprovement(List<Point> points) {
+
     }
 
     @Override
-    public void recordStep() {
-        solutionHistory.addStep(proposedSolution);
+    public boolean solutionCanBeImproved(int iterationsWithoutImprovement) {
+        return iterationsWithoutImprovement < maximumNumberOfTrials;
+    }
+
+    @Override
+    public boolean isABetterCandidate(double travelCostDifference) {
+        return travelCostDifference < 0;
     }
 }

@@ -4,17 +4,14 @@ import pl.radoslawkarwacki.model.Point;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 
 public class SingleStepDrawer {
 
-    private ArrayList<Point> step = new ArrayList<>();
+    private List<Point> step = new ArrayList<>();
 
-    public ArrayList<Point> getStep() {
-        return step;
-    }
-
-    public void setStep(ArrayList<Point> step) {
+    public void setStep(java.util.List<Point> step) {
         this.step = step;
     }
 

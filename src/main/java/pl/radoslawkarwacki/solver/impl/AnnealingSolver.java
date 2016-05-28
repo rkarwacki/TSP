@@ -1,67 +1,54 @@
 package pl.radoslawkarwacki.solver.impl;
 
 import pl.radoslawkarwacki.model.Point;
-import pl.radoslawkarwacki.solver.RecordableTSPSolver;
-import pl.radoslawkarwacki.utils.TSPUtils;
+import pl.radoslawkarwacki.solver.TSPUseCase;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 
-public class AnnealingSolver extends RecordableTSPSolver {
+public class AnnealingSolver implements TSPUseCase {
 
     private double initialTemperature;
     private double minimalTemperature;
-    private int numberOfTrials;
+    private int maximumNumberOfTrials;
     private double coolingCoefficient;
-    private int iterationsWithoutImprovement;
+    private List<Point> initialPoints;
 
-    private ArrayList<Point> prev_solution;
-    private ArrayList<Point> newSolution;
 
-    public AnnealingSolver(int noOfPoints, Random r, double initialTemperature, double minimalTemperature, int numberOfTrials, double coolingCoefficient) {
-        super(noOfPoints, r);
+    public AnnealingSolver(List<Point> initialPoints, double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient) {
+        this.initialPoints = initialPoints;
         this.initialTemperature = initialTemperature;
         this.minimalTemperature = minimalTemperature;
-        this.numberOfTrials = numberOfTrials;
+        this.maximumNumberOfTrials = maximumNumberOfTrials;
         this.coolingCoefficient = coolingCoefficient;
     }
 
-    @Override
-    public void solve() {
-        prev_solution = new ArrayList<>(solution);
-        while (initialTemperature > minimalTemperature && iterationsWithoutImprovement < numberOfTrials) {
-            algorithmStep();
-        }
-        solution = newSolution;
-    }
 
     @Override
-    public void algorithmStep() {
-        ArrayList<Point> currentSolution = new ArrayList<>(prev_solution);
-        newSolution = new ArrayList<>(TSPUtils.swapTwoEdges(prev_solution));
-        recordStep();
-        if (isABetterCandidate()) {
-            iterationsWithoutImprovement = 0;
-            prev_solution = new ArrayList<>(newSolution);
-        } else {
-            newSolution = currentSolution;
-            iterationsWithoutImprovement++;
-        }
-        performCooling();
+    public void useImprovement(List<Point> points) {
+        lowerTemperature();
     }
+
 
     @Override
-    public void recordStep() {
-        solutionHistory.addStep(newSolution);
+    public boolean solutionCanBeImproved(int iterationsWithoutImprovement) {
+        return initialTemperature > minimalTemperature && iterationsWithoutImprovement < maximumNumberOfTrials;
     }
 
-    private void performCooling() {
+
+    private void lowerTemperature() {
         initialTemperature = coolingCoefficient * initialTemperature;
     }
 
-    private boolean isABetterCandidate() {
-        double travelCostDifference = TSPUtils.getTotalTourCost(newSolution) - TSPUtils.getTotalTourCost(prev_solution);
+
+    @Override
+    public boolean isABetterCandidate(double travelCostDifference) {
         return travelCostDifference < 0 || (travelCostDifference > 0 && Math.exp(-travelCostDifference / initialTemperature) > Math.random());
+    }
+
+
+    @Override
+    public List<Point> getInitialPoints() {
+        return this.initialPoints;
     }
 }

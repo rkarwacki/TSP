@@ -1,16 +1,17 @@
 package pl.radoslawkarwacki.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SolutionHistory {
 
-    private ArrayList<ArrayList<Point>> steps = new ArrayList<>();
+    private ArrayList<List<Point>> steps = new ArrayList<>();
 
-    public void addStep(ArrayList<Point> step){
+    public void addStep(List<Point> step){
         steps.add(step);
     }
 
-    public ArrayList<Point> getStep(int stepNumber){
+    public List<Point> getStep(int stepNumber){
         return steps.get(stepNumber);
     }
 
