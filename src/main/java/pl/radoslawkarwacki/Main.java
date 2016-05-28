@@ -1,4 +1,4 @@
-package pl.radoslawkarwacki.entry;
+package pl.radoslawkarwacki;
 
 
 import pl.radoslawkarwacki.gui.TSPDrawer;
@@ -7,42 +7,15 @@ import pl.radoslawkarwacki.solver.TSPSolver;
 import pl.radoslawkarwacki.solver.TSPUseCase;
 import pl.radoslawkarwacki.solver.impl.AnnealingSolver;
 import pl.radoslawkarwacki.solver.impl.TSPRecorder;
-import pl.radoslawkarwacki.solver.impl.TwoOptSwapSolver;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MainFrame {
-
-    private JFrame frame = new JFrame();
-    public JPanel panel = new JPanel(new BorderLayout());
-
-    private TSPDrawer tsp;
-
-
-    public MainFrame(SolutionHistory pointList) {
-        tsp = new TSPDrawer(pointList);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.add(panel);
-        panel.setBackground(Color.white);
-        JButton button1 = new JButton("Start");
-        frame.add(button1, BorderLayout.NORTH);
-        button1.addActionListener(e -> tsp.startSimulation());
-        panel.add(tsp);
-        frame.pack();
-        frame.setVisible(true);
-    }
+public class Main {
 
     public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-                System.err.println("error during UI manager startup");
-            }
-
             TSPUseCase annealingSolver;
             TSPUseCase twoOptSwapSolver;
             TSPRecorder recorder;
@@ -63,8 +36,34 @@ public class MainFrame {
             solver.solve();
             SolutionHistory solutionHistory = recorder.getSolutionHistory();
 
+            EventQueue.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+                System.err.println("error during UI manager startup");
+            }
+
             @SuppressWarnings("unused")
-            MainFrame f = new MainFrame(solutionHistory);
+            Main f = new Main(solutionHistory);
         });
+    }
+    private JFrame frame = new JFrame();
+
+    public JPanel panel = new JPanel(new BorderLayout());
+
+
+    private TSPDrawer tsp;
+
+    public Main(SolutionHistory pointList) {
+        tsp = new TSPDrawer(pointList);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.add(panel);
+        panel.setBackground(Color.white);
+        JButton button1 = new JButton("Start");
+        frame.add(button1, BorderLayout.NORTH);
+        button1.addActionListener(e -> tsp.startSimulation());
+        panel.add(tsp);
+        frame.pack();
+        frame.setVisible(true);
     }
 }
