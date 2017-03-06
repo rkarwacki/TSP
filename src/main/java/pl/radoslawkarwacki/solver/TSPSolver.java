@@ -98,17 +98,17 @@ public class TSPSolver {
 
 
     private boolean isABetterCandidate() {
-        return this.tspUseCase.isABetterCandidate(getTravelCostDifference());
+        return tspUseCase.isABetterCandidate(getTravelCostDifference());
     }
 
 
     private boolean canBeImproved() {
-        return this.tspUseCase.solutionCanBeImproved(getIterationsWithoutImprovement());
+        return tspUseCase.solutionCanBeImproved(getIterationsWithoutImprovement());
     }
 
 
     private void useImprovement() {
-        this.tspUseCase.useImprovement(this.currentSolution);
+        tspUseCase.useImprovement(currentSolution);
     }
 
 

@@ -22,6 +22,7 @@ import java.util.Random;
 
 public class Main {
 
+    //TODO externalise configuration
     public static final boolean ANNEALING = true; // false for 2-opt
 
     // 2-opt swap parameters (required for annealing also)
@@ -48,6 +49,7 @@ public class Main {
         TSPRecorder recorder;
         TSPSolver solver;
 
+        //TODO implement a few random generators
         Random r = new Random(RANDOM_SEED);
 
         List<Point> points = new ArrayList<>();
@@ -67,6 +69,7 @@ public class Main {
         solver.solve();
         SolutionHistory solutionHistory = recorder.getSolutionHistory();
 
+        //TODO use JavaFX
         EventQueue.invokeLater(() -> {
             try {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
