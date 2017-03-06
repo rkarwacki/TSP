@@ -10,69 +10,93 @@ import java.awt.*;
 
 public class TSPDrawer extends JPanel {
 
-    private int totalFrames;
-    private int frameToDisplay;
+    private static int WINDOW_SIZE_X;
+    private static int WINDOW_SIZE_Y;
+
+    private int totalFramesCount;
+    private int nextFrameNumber;
+    private int currentFrameToDisplay;
+
+    private SolutionDrawer solutionDrawer = null;
     private Timer timer;
-    private SolutionDrawer solution = null;
+
     private JLabel statusBar = new JLabel(" ");
-    private int nextFrame;
     private ChartDataSet chartDataSet = new ChartDataSet();
     private XYSeries series1 = new XYSeries("TSP");
 
-    public TSPDrawer(SolutionHistory history, int delayMs, int replaySpeed) {
-        setLayout(new BorderLayout());
-        add(statusBar, BorderLayout.SOUTH);
-        setOpaque(false);
+
+    public TSPDrawer(SolutionHistory history, int delayMs, int replaySpeed, int windowSizeX, int windowSizeY) {
+        initializeWindow(windowSizeX, windowSizeY);
 
         timer = new Timer(delayMs, e -> {
-            solution = new SolutionDrawer(history);
-            nextFrame = frameToDisplay+=replaySpeed;
-            totalFrames = solution.getNoOfFrames();
-            if (nextFrame < totalFrames) {
-                solution.setCurrentFrameToDraw(nextFrame);
-                repaint();
-            }
-            else {
-                nextFrame = totalFrames - 1;
-                solution.setCurrentFrameToDraw(nextFrame);
-                repaint();
-                stopSimulation();
+            initializeSolutionDrawer(history, replaySpeed);
+            if (nextFrameNumber < totalFramesCount) {
+                drawFrame();
+            } else {
+                drawLastFrame();
             }
             updateStatusBarWithCurrentFrameAndCostData();
         });
+        initializeTimer();
+    }
 
+    private void initializeSolutionDrawer(SolutionHistory history, int replaySpeed) {
+        solutionDrawer = new SolutionDrawer(history);
+        nextFrameNumber = currentFrameToDisplay += replaySpeed;
+        totalFramesCount = solutionDrawer.getNoOfFrames();
+    }
+
+    private void drawFrame() {
+        solutionDrawer.setCurrentFrameToDraw(nextFrameNumber);
+        repaint();
+    }
+
+    private void drawLastFrame() {
+        nextFrameNumber = totalFramesCount - 1;
+        drawFrame();
+        stopSimulation();
+    }
+
+    private void initializeTimer() {
         timer.setRepeats(true);
         timer.setCoalesce(true);
     }
 
+    private void initializeWindow(int windowSizeX, int windowSizeY) {
+        setLayout(new BorderLayout());
+        add(statusBar, BorderLayout.SOUTH);
+        setOpaque(false);
+        WINDOW_SIZE_X = windowSizeX;
+        WINDOW_SIZE_Y = windowSizeY;
+    }
+
 
     private void updateStatusBarWithCurrentFrameAndCostData() {
-        statusBar.setText("Iteration: " + (nextFrame + 1) + "/" + totalFrames + ", cost: " + solution.getCostAtFrame(nextFrame));
-        series1.add(nextFrame, solution.getCostAtFrame(nextFrame));
+        statusBar.setText("Iteration: " + (nextFrameNumber + 1) + "/" + totalFramesCount + ", cost: " + solutionDrawer.getCostAtFrame(nextFrameNumber));
+        series1.add(nextFrameNumber, solutionDrawer.getCostAtFrame(nextFrameNumber));
     }
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(1000, 600);
+        return new Dimension(WINDOW_SIZE_X, WINDOW_SIZE_Y);
     }
 
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (solution!=null) {
-            solution.draw(g);
+        if (solutionDrawer != null) {
+            solutionDrawer.draw(g);
         }
     }
 
-
     private void stopSimulation() {
         timer.stop();
-        chartDataSet.addSeriesToCollection(new XYSeries("Dummy"));
+        chartDataSet.addSeriesToCollection(new XYSeries("Result"));
         chartDataSet.addSeriesToCollection(series1);
         new LineChart("TSP", chartDataSet.getDataset()).showChart();
     }
 
     public void startSimulation() {
-        frameToDisplay = 0;
+        currentFrameToDisplay = 0;
         timer.start();
     }
 }

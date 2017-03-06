@@ -26,7 +26,7 @@ public class Main {
 
     // 2-opt swap parameters (required for annealing also)
     public static final int NUMBER_OF_CITIES = 200;
-    public static final int NUMBER_OF_TRIALS = 10000;
+    public static final int NUMBER_OF_TRIALS = 1000000;
     public static final long RANDOM_SEED = 124531;
 
     // additional parameters required for annealing
@@ -39,6 +39,8 @@ public class Main {
 
     //
     public static final int FRAMES_IN_BETWEEN = 10;
+    public static final int RANGE_X = 1600;
+    public static final int RANGE_Y = 900;
 
     public static void main(String[] args) {
         TSPUseCase annealingSolver;
@@ -50,7 +52,7 @@ public class Main {
 
         List<Point> points = new ArrayList<>();
         for (int i = 0; i < NUMBER_OF_CITIES; i++){
-            points.add(new Point(r,1000,600));
+            points.add(new Point(r, RANGE_X, RANGE_Y));
         }
         if (ANNEALING) {
             annealingSolver = new AnnealingSolver(points, INITIAL_TEMPERATURE, MINIMAL_TEMPERATURE, NUMBER_OF_TRIALS, COOLING_COEFFICIENT);
@@ -73,15 +75,15 @@ public class Main {
             }
 
             @SuppressWarnings("unused")
-            Main f = new Main(solutionHistory);
+            Main f = new Main(solutionHistory, RANGE_X, RANGE_Y);
         });
     }
 
 
     private TSPDrawer tspDrawer;
 
-    public Main(SolutionHistory pointList) {
-        tspDrawer = new TSPDrawer(pointList, DELAY_MS, FRAMES_IN_BETWEEN);
+    public Main(SolutionHistory pointList, int windowSizeX, int windowSizeY) {
+        tspDrawer = new TSPDrawer(pointList, DELAY_MS, FRAMES_IN_BETWEEN, windowSizeX, windowSizeY);
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         JPanel panel = new JPanel(new BorderLayout());

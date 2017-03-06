@@ -8,10 +8,6 @@ import java.util.List;
 
 public class AnnealingSolver implements TSPUseCase {
 
-    private List<Point> currentSolution;
-    private List<Point> newSolution;
-    private List<Point> finalSolution;
-
     private double initialTemperature;
     private double minimalTemperature;
     private int maximumNumberOfTrials;
