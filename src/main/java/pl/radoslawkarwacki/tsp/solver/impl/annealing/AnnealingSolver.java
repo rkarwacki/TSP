@@ -1,14 +1,14 @@
-package pl.radoslawkarwacki.solver.impl;
+package pl.radoslawkarwacki.tsp.solver.impl.annealing;
 
-import pl.radoslawkarwacki.model.Point;
-import pl.radoslawkarwacki.solver.TSPUseCase;
+import pl.radoslawkarwacki.tsp.model.Point;
+import pl.radoslawkarwacki.tsp.solver.TSPUseCase;
 
 import java.util.List;
 
 
 public class AnnealingSolver implements TSPUseCase {
 
-    private double initialTemperature;
+    private double currentTemperature;
     private double minimalTemperature;
     private int maximumNumberOfTrials;
     private double coolingCoefficient;
@@ -17,7 +17,7 @@ public class AnnealingSolver implements TSPUseCase {
 
     public AnnealingSolver(List<Point> initialPoints, double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient) {
         this.initialPoints = initialPoints;
-        this.initialTemperature = initialTemperature;
+        this.currentTemperature = initialTemperature;
         this.minimalTemperature = minimalTemperature;
         this.maximumNumberOfTrials = maximumNumberOfTrials;
         this.coolingCoefficient = coolingCoefficient;
@@ -31,17 +31,17 @@ public class AnnealingSolver implements TSPUseCase {
 
     @Override
     public boolean solutionCanBeImproved(int iterationsWithoutImprovement) {
-        return initialTemperature > minimalTemperature && iterationsWithoutImprovement < maximumNumberOfTrials;
+        return currentTemperature > minimalTemperature && iterationsWithoutImprovement < maximumNumberOfTrials;
     }
 
 
     private void lowerTemperature() {
-        initialTemperature = coolingCoefficient * initialTemperature;
+        currentTemperature = coolingCoefficient * currentTemperature;
     }
 
     @Override
     public boolean isABetterCandidate(double travelCostDifference) {
-        return travelCostDifference < 0 || (travelCostDifference > 0 && Math.exp(-travelCostDifference / initialTemperature) > Math.random());
+        return travelCostDifference < 0 || (travelCostDifference > 0 && Math.exp(-travelCostDifference / currentTemperature) > Math.random());
     }
 
     @Override

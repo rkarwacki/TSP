@@ -1,8 +1,8 @@
-package pl.radoslawkarwacki.solver.impl;
+package pl.radoslawkarwacki.tsp.solver.impl;
 
-import pl.radoslawkarwacki.model.Point;
-import pl.radoslawkarwacki.model.SolutionHistory;
-import pl.radoslawkarwacki.solver.TSPSolverListener;
+import pl.radoslawkarwacki.tsp.model.Point;
+import pl.radoslawkarwacki.tsp.model.SolutionHistory;
+import pl.radoslawkarwacki.tsp.solver.TSPSolverListener;
 
 import java.util.List;
 

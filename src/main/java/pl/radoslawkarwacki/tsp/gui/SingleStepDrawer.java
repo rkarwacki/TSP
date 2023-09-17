@@ -1,6 +1,6 @@
-package pl.radoslawkarwacki.gui;
+package pl.radoslawkarwacki.tsp.gui;
 
-import pl.radoslawkarwacki.model.Point;
+import pl.radoslawkarwacki.tsp.model.Point;
 
 import java.awt.*;
 import java.awt.geom.Line2D;

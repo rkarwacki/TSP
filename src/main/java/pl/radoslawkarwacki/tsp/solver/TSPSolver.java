@@ -1,6 +1,6 @@
-package pl.radoslawkarwacki.solver;
+package pl.radoslawkarwacki.tsp.solver;
 
-import pl.radoslawkarwacki.model.Point;
+import pl.radoslawkarwacki.tsp.model.Point;
 
 import java.util.*;
 
@@ -19,17 +19,6 @@ public class TSPSolver {
     public TSPSolver(TSPUseCase tspUseCase) {
         this.tspUseCase = tspUseCase;
         this.listeners = new HashSet<>();
-    }
-
-    public static double getTotalTourCost(List<Point> points) {
-        double cost = 0;
-        if (points.size() > 2) {
-            for (int i = 0; i < points.size() - 1; i++) {
-                cost += points.get(i).calculateDistanceToPoint(points.get(i + 1));
-            }
-            cost += points.get(points.size()-1).calculateDistanceToPoint(points.get(0));
-        }
-        return cost;
     }
 
     private static ArrayList<Point> swapTwoRandomEdges(List<Point> points) {
@@ -61,7 +50,7 @@ public class TSPSolver {
 
 
     protected double getTravelCostDifference() {
-        return getTotalTourCost(newSolution) - getTotalTourCost(currentSolution);
+        return TSPUtil.getTotalTravelCost(newSolution) - TSPUtil.getTotalTravelCost(currentSolution);
     }
 
 

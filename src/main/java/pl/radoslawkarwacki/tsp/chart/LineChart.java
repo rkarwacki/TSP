@@ -1,4 +1,4 @@
-package pl.radoslawkarwacki.chart;
+package pl.radoslawkarwacki.tsp.chart;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;

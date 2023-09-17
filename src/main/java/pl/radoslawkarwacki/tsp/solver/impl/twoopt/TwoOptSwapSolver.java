@@ -1,7 +1,7 @@
-package pl.radoslawkarwacki.solver.impl;
+package pl.radoslawkarwacki.tsp.solver.impl.twoopt;
 
-import pl.radoslawkarwacki.model.Point;
-import pl.radoslawkarwacki.solver.TSPUseCase;
+import pl.radoslawkarwacki.tsp.model.Point;
+import pl.radoslawkarwacki.tsp.solver.TSPUseCase;
 
 import java.util.List;
 

@@ -1,12 +1,14 @@
-package pl.radoslawkarwacki.gui;
+package pl.radoslawkarwacki.tsp.gui;
 
 import org.jfree.data.xy.XYSeries;
-import pl.radoslawkarwacki.chart.ChartDataSet;
-import pl.radoslawkarwacki.chart.LineChart;
-import pl.radoslawkarwacki.model.SolutionHistory;
+import pl.radoslawkarwacki.tsp.chart.ChartDataSet;
+import pl.radoslawkarwacki.tsp.chart.LineChart;
+import pl.radoslawkarwacki.tsp.model.SolutionHistory;
 
 import javax.swing.*;
 import java.awt.*;
+
+import static pl.radoslawkarwacki.tsp.Main.DRAW_CHART;
 
 public class TSPDrawer extends JPanel {
 
@@ -35,6 +37,7 @@ public class TSPDrawer extends JPanel {
             } else {
                 drawLastFrame();
             }
+            series1.add(nextFrameNumber, solutionDrawer.getCostAtFrame(nextFrameNumber));
             updateStatusBarWithCurrentFrameAndCostData();
         });
         initializeTimer();
@@ -73,7 +76,6 @@ public class TSPDrawer extends JPanel {
 
     private void updateStatusBarWithCurrentFrameAndCostData() {
         statusBar.setText("Iteration: " + (nextFrameNumber + 1) + "/" + totalFramesCount + ", cost: " + solutionDrawer.getCostAtFrame(nextFrameNumber));
-        series1.add(nextFrameNumber, solutionDrawer.getCostAtFrame(nextFrameNumber));
     }
 
     @Override
@@ -90,9 +92,11 @@ public class TSPDrawer extends JPanel {
 
     private void stopSimulation() {
         timer.stop();
-        chartDataSet.addSeriesToCollection(new XYSeries("Result"));
-        chartDataSet.addSeriesToCollection(series1);
-        new LineChart("TSP", chartDataSet.getDataset()).showChart();
+        if (DRAW_CHART) {
+            chartDataSet.addSeriesToCollection(new XYSeries("Result"));
+            chartDataSet.addSeriesToCollection(series1);
+            new LineChart("TSP", chartDataSet.getDataset()).showChart();
+        }
     }
 
     public void startSimulation() {

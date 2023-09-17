@@ -1,4 +1,4 @@
-package pl.radoslawkarwacki.chart;
+package pl.radoslawkarwacki.tsp.chart;
 
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
