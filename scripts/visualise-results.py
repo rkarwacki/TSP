@@ -5,7 +5,7 @@ import seaborn as sns
 
 # 1. Parse JSON data from log file
 data = []
-with open('../results/tune.jsonl', 'r') as f:
+with open('/Users/radek/projects/TSP/results/tune.jsonl', 'r') as f:
     for line in f:
         if line.strip():
             record = json.loads(line)

@@ -10,11 +10,11 @@ OUTFILE="results/tune.jsonl"
 : > "${OUTFILE}"
 
 # Parameter grid for Simulated Annealing (wider, granular)
-T0S=(100 200 250 300 350 400 450 500 600)
-ALPHAS=(0.99990 0.99992 0.99994 0.99995 0.99996 0.99997 0.99998)
+T0S=(475 500 525 550 575 600)
+ALPHAS=(0.94 0.95 0.96 0.97 0.98)
 
 # Number of reruns per configuration (can override with env RERUNS)
-RERUNS=${RERUNS:-2}
+RERUNS=${RERUNS:-1}
 
 total=0
 for t0 in "${T0S[@]}"; do

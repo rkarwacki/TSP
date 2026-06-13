@@ -1,11 +1,11 @@
 {
   "annealing": true,
   "numberOfCities": 350,
-  "numberOfTrials": 1000000,
+  "numberOfTrials": 50000,
   "randomSeed": 124531,
   "initialTemperature": 500,
-  "minimalTemperature": 0.000000001,
-  "coolingCoefficient": 0.99995,
+  "minimalTemperature": 0.00001,
+  "coolingCoefficient": 0.92,
   "rangeX": 1600,
   "rangeY": 850
 }

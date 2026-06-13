@@ -54,7 +54,7 @@ public class AppConfig {
                 124531L,    // randomSeed
                 500,        // initialTemperature
                 0.00001,    // minimalTemperature
-                0.99995,    // coolingCoefficient
+                0.92,    // coolingCoefficient
                 true,       // drawChart
                 1,          // delayMs
                 1,          // framesInBetween
