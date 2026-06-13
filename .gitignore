@@ -85,4 +85,5 @@ hs_err_pid*
 *~
 *.swp
 *.swo
+results/
 .aider*

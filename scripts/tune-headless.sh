@@ -4,40 +4,30 @@ set -euo pipefail
 # Build the project (ensures target jar and libs exist)
 mvn -q -DskipTests package
 
+# Output file (JSON Lines)
 mkdir -p results
-: > results/index.tsv
+OUTFILE="results/tune.jsonl"
+: > "${OUTFILE}"
 
-# Parameter grid for Simulated Annealing (10 runs total)
-T0S=(400 500 600 700 800)
-ALPHAS=(0.99995 0.99997)
+# Parameter grid for Simulated Annealing (wider, granular)
+T0S=(300 350 400 450 500 550 600 650 700 750 800 850 900)
+ALPHAS=(0.99990 0.99992 0.99994 0.99995 0.99996 0.99997 0.99998)
 
-count=0
+# Number of reruns per configuration (can override with env RERUNS)
+RERUNS=${RERUNS:-3}
+
+total=0
 for t0 in "${T0S[@]}"; do
   for a in "${ALPHAS[@]}"; do
-    count=$((count + 1))
-    if [ $count -gt 10 ]; then
-      break 2
-    fi
-    outfile="results/tune_T${t0}_a${a}.json"
-    echo "Running: T0=${t0}, alpha=${a} -> ${outfile}"
-    java -jar target/TSP-1.0-SNAPSHOT.jar --headless --config run.json \
-      --initial-temperature ${t0} --cooling-coefficient ${a} --output "${outfile}"
-
-    # Extract finalCost from JSON and index it
-    cost=$(grep -o '"finalCost":[^,]*' "${outfile}" | head -1 | cut -d: -f2 | tr -d ' ')
-    echo "${cost}\t${outfile}" >> results/index.tsv
+    for run in $(seq 1 ${RERUNS}); do
+      total=$(( total + 1 ))
+      echo "[$total] T0=${t0}, alpha=${a}, run=${run} -> appending to ${OUTFILE}"
+      # Let the app write compact JSON to stdout; append to JSONL
+      java -jar target/TSP-1.0-SNAPSHOT.jar --headless --config run.json \
+        --initial-temperature ${t0} --cooling-coefficient ${a} >> "${OUTFILE}"
+      echo "" >> "${OUTFILE}"  # ensure newline separation
+    done
   done
 done
 
-bestLine=$(sort -n results/index.tsv | head -1 || true)
-if [ -z "${bestLine}" ]; then
-  echo "No results found."
-  exit 1
-fi
-bestCost="${bestLine%%$'\t'*}"
-bestFile="${bestLine#*$'\t'}"
-
-echo "Best configuration across ${count} runs:"
-echo "  finalCost=${bestCost}"
-echo "  resultFile=${bestFile}"
-echo "Done."
+echo "Completed ${total} headless runs. Results appended to ${OUTFILE}"
