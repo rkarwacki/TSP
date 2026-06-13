@@ -122,6 +122,14 @@ public class TSPDrawer extends JPanel {
 
     private void updateStatusBarWithCurrentFrameAndCostData() {
         statusBar.setText("Iteration: " + (nextFrameNumber + 1) + "/" + totalFramesCount + ", cost: " + solutionDrawer.getCostAtFrame(nextFrameNumber));
+        statusBar.setHorizontalAlignment(JLabel.CENTER);
+        statusBar.setVerticalAlignment(JLabel.CENTER);
+        statusBar.setHorizontalTextPosition(JLabel.CENTER);
+        statusBar.setVerticalTextPosition(JLabel.CENTER);
+        statusBar.setHorizontalAlignment(JLabel.CENTER);
+        statusBar.setVerticalAlignment(JLabel.CENTER);
+        statusBar.setHorizontalTextPosition(JLabel.CENTER);
+        statusBar.setVerticalTextPosition(JLabel.CENTER);
     }
 
     @Override
@@ -161,7 +169,7 @@ public class TSPDrawer extends JPanel {
             javax.swing.JFrame chartFrame = new javax.swing.JFrame("TSP Cost");
             chartFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             chartFrame.setContentPane(chartPanel);
-            chartFrame.pack();
+            chartFrame.setSize(2000, 1000);
             java.awt.Window parent = SwingUtilities.getWindowAncestor(this);
             if (parent != null) {
                 chartFrame.setLocationRelativeTo(parent);
