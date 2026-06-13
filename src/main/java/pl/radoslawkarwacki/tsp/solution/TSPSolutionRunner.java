@@ -3,8 +3,7 @@ package pl.radoslawkarwacki.tsp.solution;
 import pl.radoslawkarwacki.tsp.config.AppConfig;
 import pl.radoslawkarwacki.tsp.mapgeneration.MapGenerationConfiguration;
 import pl.radoslawkarwacki.tsp.mapgeneration.MapGenerator;
-import pl.radoslawkarwacki.tsp.mapgeneration.impl.MultipleClustersMapGenerator;
-import pl.radoslawkarwacki.tsp.mapgeneration.impl.OffsetGridMapGenerator;
+import pl.radoslawkarwacki.tsp.mapgeneration.impl.RandomMapGenerator;
 import pl.radoslawkarwacki.tsp.model.Point;
 import pl.radoslawkarwacki.tsp.model.SolutionHistory;
 import pl.radoslawkarwacki.tsp.solver.TSPSolver;
@@ -26,7 +25,7 @@ public class TSPSolutionRunner {
     public SolutionHistory solveTSP() {
         MapGenerationConfiguration mapGenerationConfiguration =
                 new MapGenerationConfiguration(config.getNumberOfCities(), config.getRandomSeed(), config.getRangeX(), config.getRangeY());
-        MapGenerator mapGenerator = new MultipleClustersMapGenerator(mapGenerationConfiguration);
+        MapGenerator mapGenerator = new RandomMapGenerator(mapGenerationConfiguration);
         List<Point> points = mapGenerator.generateMap();
         TSPUseCase tspAlgorithm;
         if (config.isAnnealing()) {
