@@ -4,6 +4,7 @@ import org.jfree.data.xy.XYSeries;
 import pl.radoslawkarwacki.tsp.chart.ChartDataSet;
 import pl.radoslawkarwacki.tsp.chart.LineChart;
 import pl.radoslawkarwacki.tsp.model.SolutionHistory;
+import pl.radoslawkarwacki.tsp.solution.RunStats;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +26,7 @@ public class TSPDrawer extends JPanel {
     private final boolean playAnimation;
     private final SolutionHistory history;
     private final int replaySpeed;
+    private final RunStats runStats;
 
     private JLabel statusBar = new JLabel(" ");
     private JSlider frameSlider;
@@ -33,12 +35,13 @@ public class TSPDrawer extends JPanel {
     private boolean chartSeriesInitialized = false;
 
 
-    public TSPDrawer(SolutionHistory history, int delayMs, int replaySpeed, int windowSizeX, int windowSizeY, boolean drawChart, boolean playAnimation) {
+    public TSPDrawer(SolutionHistory history, int delayMs, int replaySpeed, int windowSizeX, int windowSizeY, boolean drawChart, boolean playAnimation, RunStats runStats) {
         initializeWindow(windowSizeX, windowSizeY);
         this.drawChart = drawChart;
         this.playAnimation = playAnimation;
         this.history = history;
         this.replaySpeed = replaySpeed;
+        this.runStats = runStats;
 
         timer = new Timer(delayMs, e -> {
             initializeSolutionDrawer(this.history, this.replaySpeed);
@@ -168,7 +171,21 @@ public class TSPDrawer extends JPanel {
             org.jfree.chart.ChartPanel chartPanel = new org.jfree.chart.ChartPanel(chart);
             javax.swing.JFrame chartFrame = new javax.swing.JFrame("TSP Cost");
             chartFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            chartFrame.setContentPane(chartPanel);
+            javax.swing.JPanel container = new javax.swing.JPanel(new java.awt.BorderLayout());
+            container.add(chartPanel, java.awt.BorderLayout.CENTER);
+            if (runStats != null) {
+                String info = "<html><b>" + runStats.getAlgorithm() + "</b> — " + runStats.getStopReason()
+                        + "<br/>Frames: " + runStats.getTotalFrames()
+                        + ("Annealing".equals(runStats.getAlgorithm())
+                            ? String.format(", final T=%.6f, minimal T=%.6f, temp lowerings=%d, max trials w/o improvement=%d",
+                                runStats.getFinalTemperature(), runStats.getMinimalTemperature(), runStats.getStepsLowered(), runStats.getMaxTrials())
+                            : String.format(", max trials w/o improvement=%d", runStats.getMaxTrials()))
+                        + "</html>";
+                javax.swing.JLabel infoLabel = new javax.swing.JLabel(info);
+                infoLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 10, 6, 10));
+                container.add(infoLabel, java.awt.BorderLayout.SOUTH);
+            }
+            chartFrame.setContentPane(container);
             chartFrame.setSize(2000, 1000);
             java.awt.Window parent = SwingUtilities.getWindowAncestor(this);
             if (parent != null) {

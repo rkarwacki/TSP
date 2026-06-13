@@ -79,4 +79,20 @@ public class AnnealingSolver implements TSPUseCase {
     public List<Point> getInitialPoints() {
         return this.initialPoints;
     }
+
+    public double getCurrentTemperature() {
+        return currentTemperature;
+    }
+
+    public double getMinimalTemperature() {
+        return minimalTemperature;
+    }
+
+    public int getMaximumNumberOfTrials() {
+        return maximumNumberOfTrials;
+    }
+
+    public int getStepsSoFar() {
+        return stepsSoFar;
+    }
 }

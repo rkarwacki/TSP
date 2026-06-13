@@ -22,11 +22,11 @@ public class TSPSolutionRunner {
         this.config = config;
     }
 
-    public SolutionHistory solveTSP() {
+    public SolveResult solveTSP() {
         return solveTSP(null);
     }
 
-    public SolutionHistory solveTSP(AnnealingSolver.ProgressListener progressListener) {
+    public SolveResult solveTSP(AnnealingSolver.ProgressListener progressListener) {
         MapGenerationConfiguration mapGenerationConfiguration =
                 new MapGenerationConfiguration(config.getNumberOfCities(), config.getRandomSeed(), config.getRangeX(), config.getRangeY());
         MapGenerator mapGenerator = new RandomMapGenerator(mapGenerationConfiguration);
@@ -49,6 +49,18 @@ public class TSPSolutionRunner {
         TSPRecorder recorder = new TSPRecorder();
         solver.addListener(recorder);
         solver.solve();
-        return recorder.getSolutionHistory();
+        RunStats stats;
+        if (config.isAnnealing()) {
+            AnnealingSolver annealingSolver = (AnnealingSolver) tspAlgorithm;
+            double finalTemp = annealingSolver.getCurrentTemperature();
+            double minTemp = annealingSolver.getMinimalTemperature();
+            int steps = annealingSolver.getStepsSoFar();
+            int maxTrials = annealingSolver.getMaximumNumberOfTrials();
+            String stopReason = finalTemp <= minTemp ? "Reached minimal temperature" : "Exceeded iterations without improvement";
+            stats = new RunStats("Annealing", finalTemp, minTemp, maxTrials, steps, recorder.getSolutionHistory().getNumberOfFrames(), stopReason);
+        } else {
+            stats = new RunStats("2-opt", 0.0, 0.0, config.getNumberOfTrials(), 0, recorder.getSolutionHistory().getNumberOfFrames(), "Exceeded iterations without improvement");
+        }
+        return new SolveResult(recorder.getSolutionHistory(), stats);
     }
 }

@@ -3,6 +3,7 @@ package pl.radoslawkarwacki.tsp.gui;
 import pl.radoslawkarwacki.tsp.config.AppConfig;
 import pl.radoslawkarwacki.tsp.model.SolutionHistory;
 import pl.radoslawkarwacki.tsp.solution.TSPSolutionRunner;
+import pl.radoslawkarwacki.tsp.solution.SolveResult;
 import pl.radoslawkarwacki.tsp.solver.impl.annealing.AnnealingSolver;
 
 import javax.swing.*;
@@ -152,15 +153,15 @@ public class Window {
                 // Run solving off the EDT
                 start.setEnabled(false);
                 AnnealingSolver.ProgressListener finalListener = listener;
-                SwingWorker<SolutionHistory, Void> worker = new SwingWorker<>() {
+                SwingWorker<SolveResult, Void> worker = new SwingWorker<>() {
                     @Override
-                    protected SolutionHistory doInBackground() {
+                    protected SolveResult doInBackground() {
                         return new TSPSolutionRunner(config).solveTSP(finalListener);
                     }
                     @Override
                     protected void done() {
                         try {
-                            SolutionHistory history = get();
+                            SolveResult result = get();
                             // Ensure bar shows completion for annealing
                             if (annealing) {
                                 SwingUtilities.invokeLater(() -> {
@@ -169,7 +170,7 @@ public class Window {
                                 });
                             }
                             progress.dispose();
-                            showSimulation(history, config, play);
+                            showSimulation(result, config, play);
                         } catch (Exception ex) {
                             progress.dispose();
                             JOptionPane.showMessageDialog(frame, "Error during solving:\n" + ex.getMessage(),
@@ -197,12 +198,12 @@ public class Window {
         panel.add(component, gbc);
     }
 
-    private void showSimulation(SolutionHistory history, AppConfig config, boolean playAnimation) {
+    private void showSimulation(SolveResult result, AppConfig config, boolean playAnimation) {
         if (tspDrawer != null) {
             centerPanel.remove(tspDrawer);
         }
-        tspDrawer = new TSPDrawer(history, config.getDelayMs(), config.getFramesInBetween(),
-                config.getWindowSizeX(), config.getWindowSizeY(), config.isDrawChart(), playAnimation);
+        tspDrawer = new TSPDrawer(result.getHistory(), config.getDelayMs(), config.getFramesInBetween(),
+                config.getWindowSizeX(), config.getWindowSizeY(), config.isDrawChart(), playAnimation, result.getStats());
         centerPanel.add(tspDrawer, BorderLayout.CENTER);
         centerPanel.revalidate();
         frame.pack();
