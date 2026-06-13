@@ -22,6 +22,9 @@ public class TSPDrawer extends JPanel {
     private SolutionDrawer solutionDrawer = null;
     private Timer timer;
     private final boolean drawChart;
+    private final boolean playAnimation;
+    private final SolutionHistory history;
+    private final int replaySpeed;
 
     private JLabel statusBar = new JLabel(" ");
     private JSlider frameSlider;
@@ -29,12 +32,15 @@ public class TSPDrawer extends JPanel {
     private XYSeries series1 = new XYSeries("TSP");
 
 
-    public TSPDrawer(SolutionHistory history, int delayMs, int replaySpeed, int windowSizeX, int windowSizeY, boolean drawChart) {
+    public TSPDrawer(SolutionHistory history, int delayMs, int replaySpeed, int windowSizeX, int windowSizeY, boolean drawChart, boolean playAnimation) {
         initializeWindow(windowSizeX, windowSizeY);
         this.drawChart = drawChart;
+        this.playAnimation = playAnimation;
+        this.history = history;
+        this.replaySpeed = replaySpeed;
 
         timer = new Timer(delayMs, e -> {
-            initializeSolutionDrawer(history, replaySpeed);
+            initializeSolutionDrawer(this.history, this.replaySpeed);
             if (nextFrameNumber < totalFramesCount) {
                 drawFrame();
             } else {
@@ -157,6 +163,16 @@ public class TSPDrawer extends JPanel {
 
     public void startSimulation() {
         currentFrameToDisplay = 0;
-        timer.start();
+        if (playAnimation) {
+            timer.start();
+        } else {
+            initializeSolutionDrawer(history, replaySpeed);
+            nextFrameNumber = totalFramesCount - 1;
+            solutionDrawer.setCurrentFrameToDraw(nextFrameNumber);
+            repaint();
+            series1.add(nextFrameNumber, solutionDrawer.getCostAtFrame(nextFrameNumber));
+            updateStatusBarWithCurrentFrameAndCostData();
+            stopSimulation();
+        }
     }
 }

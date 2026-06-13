@@ -48,6 +48,7 @@ public class Window {
         JTextField delayMs = new JTextField(String.valueOf(defaults.getDelayMs()), 4);
         JTextField framesInBetween = new JTextField(String.valueOf(defaults.getFramesInBetween()), 4);
         JCheckBox drawChart = new JCheckBox("Draw chart", defaults.isDrawChart());
+        JCheckBox playAnimation = new JCheckBox("Play animation", false);
 
         JTextField initialTemp = new JTextField(String.valueOf(defaults.getInitialTemperature()), 6);
         JTextField minimalTemp = new JTextField(String.valueOf(defaults.getMinimalTemperature()), 8);
@@ -75,6 +76,9 @@ public class Window {
         gbc.gridx = 1; gbc.gridy = row; gbc.gridwidth = 2;
         panel.add(drawChart, gbc);
         row++;
+        gbc.gridx = 1; gbc.gridy = row; gbc.gridwidth = 2;
+        panel.add(playAnimation, gbc);
+        row++;
         gbc.gridx = 1; gbc.gridy = row; gbc.gridwidth = 1;
         panel.add(start, gbc);
 
@@ -94,6 +98,7 @@ public class Window {
                 int w = Integer.parseInt(windowW.getText().trim());
                 int h = Integer.parseInt(windowH.getText().trim());
                 boolean chart = drawChart.isSelected();
+                boolean play = playAnimation.isSelected();
 
                 AppConfig config = new AppConfig(
                         annealing, nCities, nTrials, seed, initT, minT, cool, chart, dMs, fib, rx, ry, w, h
@@ -164,7 +169,7 @@ public class Window {
                                 });
                             }
                             progress.dispose();
-                            showSimulation(history, config);
+                            showSimulation(history, config, play);
                         } catch (Exception ex) {
                             progress.dispose();
                             JOptionPane.showMessageDialog(frame, "Error during solving:\n" + ex.getMessage(),
@@ -192,12 +197,12 @@ public class Window {
         panel.add(component, gbc);
     }
 
-    private void showSimulation(SolutionHistory history, AppConfig config) {
+    private void showSimulation(SolutionHistory history, AppConfig config, boolean playAnimation) {
         if (tspDrawer != null) {
             centerPanel.remove(tspDrawer);
         }
         tspDrawer = new TSPDrawer(history, config.getDelayMs(), config.getFramesInBetween(),
-                config.getWindowSizeX(), config.getWindowSizeY(), config.isDrawChart());
+                config.getWindowSizeX(), config.getWindowSizeY(), config.isDrawChart(), playAnimation);
         centerPanel.add(tspDrawer, BorderLayout.CENTER);
         centerPanel.revalidate();
         frame.pack();
