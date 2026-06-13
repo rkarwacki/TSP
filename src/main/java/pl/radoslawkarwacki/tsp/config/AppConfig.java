@@ -59,7 +59,7 @@ public class AppConfig {
                 1,          // delayMs
                 1,        // framesInBetween
                 1600,       // rangeX
-                700,        // rangeY
+                850,        // rangeY
                 1600,       // windowSizeX
                 900         // windowSizeY
         );

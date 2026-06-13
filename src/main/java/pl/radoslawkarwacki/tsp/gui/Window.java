@@ -32,7 +32,7 @@ public class Window {
     private JPanel buildControlPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(4, 6, 4, 6);
+        gbc.insets = new Insets(2, 4, 2, 4);
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
@@ -61,27 +61,24 @@ public class Window {
         JButton start = new JButton("Start");
 
         int row = 0;
-        addRow(panel, gbc, row++, "Algorithm:", algorithm);
-        addRow(panel, gbc, row++, "Cities:", numberOfCities);
-        addRow(panel, gbc, row++, "Trials:", numberOfTrials);
-        addRow(panel, gbc, row++, "Random seed:", randomSeed);
-        addRow(panel, gbc, row++, "Range X:", rangeX);
-        addRow(panel, gbc, row++, "Range Y:", rangeY);
-        addRow(panel, gbc, row++, "Delay (ms):", delayMs);
-        addRow(panel, gbc, row++, "Frames between:", framesInBetween);
-        addRow(panel, gbc, row++, "Initial temp:", initialTemp);
-        addRow(panel, gbc, row++, "Minimal temp:", minimalTemp);
-        addRow(panel, gbc, row++, "Cooling coeff.:", coolingCoeff);
-        addRow(panel, gbc, row++, "Window width:", windowW);
-        addRow(panel, gbc, row++, "Window height:", windowH);
-        gbc.gridx = 1; gbc.gridy = row; gbc.gridwidth = 2;
-        panel.add(drawChart, gbc);
-        row++;
-        gbc.gridx = 1; gbc.gridy = row; gbc.gridwidth = 2;
-        panel.add(playAnimation, gbc);
-        row++;
-        gbc.gridx = 1; gbc.gridy = row; gbc.gridwidth = 1;
-        panel.add(start, gbc);
+        addCompactRow(panel, gbc, row++, new LabelField("Algorithm:", algorithm));
+        addCompactRow(panel, gbc, row++,
+                new LabelField("Cities:", numberOfCities),
+                new LabelField("Trials:", numberOfTrials),
+                new LabelField("Seed:", randomSeed));
+        addCompactRow(panel, gbc, row++,
+                new LabelField("Range X:", rangeX),
+                new LabelField("Range Y:", rangeY),
+                new LabelField("Delay (ms):", delayMs),
+                new LabelField("Frames:", framesInBetween));
+        addCompactRow(panel, gbc, row++,
+                new LabelField("Initial temp:", initialTemp),
+                new LabelField("Minimal temp:", minimalTemp),
+                new LabelField("Cooling:", coolingCoeff));
+        addCompactRow(panel, gbc, row++,
+                new LabelField("Width:", windowW),
+                new LabelField("Height:", windowH));
+        addComponentRow(panel, gbc, row++, drawChart, playAnimation, start);
 
         start.addActionListener(e -> {
             try {
@@ -191,11 +188,37 @@ public class Window {
         return panel;
     }
 
-    private void addRow(JPanel panel, GridBagConstraints gbc, int row, String label, JComponent component) {
-        gbc.gridx = 0; gbc.gridy = row; gbc.weightx = 0.0;
-        panel.add(new JLabel(label), gbc);
-        gbc.gridx = 1; gbc.gridy = row; gbc.weightx = 1.0;
-        panel.add(component, gbc);
+    private record LabelField(String label, JComponent component) {}
+
+    private void addCompactRow(JPanel panel, GridBagConstraints gbc, int row, LabelField... fields) {
+        JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        for (LabelField field : fields) {
+            rowPanel.add(new JLabel(field.label()));
+            rowPanel.add(field.component());
+        }
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(rowPanel, gbc);
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.0;
+    }
+
+    private void addComponentRow(JPanel panel, GridBagConstraints gbc, int row, JComponent... components) {
+        JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        for (JComponent component : components) {
+            rowPanel.add(component);
+        }
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(rowPanel, gbc);
+        gbc.gridwidth = 1;
+        gbc.weightx = 0.0;
     }
 
     private void showSimulation(SolveResult result, AppConfig config, boolean playAnimation) {
