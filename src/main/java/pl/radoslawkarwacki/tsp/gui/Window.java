@@ -98,8 +98,44 @@ public class Window {
                         annealing, nCities, nTrials, seed, initT, minT, cool, chart, dMs, fib, rx, ry, w, h
                 );
 
-                SolutionHistory history = new TSPSolutionRunner(config).solveTSP();
-                showSimulation(history, config);
+                // Prepare a modal progress dialog with an indeterminate progress bar
+                JDialog progress = new JDialog(frame, "Solving...", true);
+                progress.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+                progress.setLayout(new BorderLayout(8, 8));
+                progress.add(new JLabel("Running " + (annealing ? "Simulated Annealing" : "2-opt") + " ..."), BorderLayout.NORTH);
+                JProgressBar bar = new JProgressBar();
+                bar.setIndeterminate(true);
+                progress.add(bar, BorderLayout.CENTER);
+                JButton cancel = new JButton("Close");
+                cancel.setEnabled(false);
+                progress.add(cancel, BorderLayout.SOUTH);
+                progress.pack();
+                progress.setLocationRelativeTo(frame);
+
+                // Run solving off the EDT
+                start.setEnabled(false);
+                SwingWorker<SolutionHistory, Void> worker = new SwingWorker<>() {
+                    @Override
+                    protected SolutionHistory doInBackground() {
+                        return new TSPSolutionRunner(config).solveTSP();
+                    }
+                    @Override
+                    protected void done() {
+                        try {
+                            SolutionHistory history = get();
+                            progress.dispose();
+                            showSimulation(history, config);
+                        } catch (Exception ex) {
+                            progress.dispose();
+                            JOptionPane.showMessageDialog(frame, "Error during solving:\n" + ex.getMessage(),
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        } finally {
+                            start.setEnabled(true);
+                        }
+                    }
+                };
+                worker.execute();
+                progress.setVisible(true);
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(frame, "Please enter valid numeric values.\n" + ex.getMessage(),
                         "Invalid input", JOptionPane.ERROR_MESSAGE);
