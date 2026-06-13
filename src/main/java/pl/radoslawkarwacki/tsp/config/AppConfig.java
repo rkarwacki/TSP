@@ -49,15 +49,15 @@ public class AppConfig {
     public static AppConfig defaults() {
         return new AppConfig(
                 true,       // annealing
-                350,         // numberOfCities
-                50000,       // numberOfTrials
+                350,        // numberOfCities
+                50000,      // numberOfTrials
                 124531L,    // randomSeed
                 500,        // initialTemperature
                 0.00001,    // minimalTemperature
                 0.99995,    // coolingCoefficient
                 true,       // drawChart
                 1,          // delayMs
-                1,        // framesInBetween
+                1,          // framesInBetween
                 1600,       // rangeX
                 850,        // rangeY
                 1600,       // windowSizeX
