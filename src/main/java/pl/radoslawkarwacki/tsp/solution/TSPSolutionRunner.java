@@ -11,6 +11,7 @@ import pl.radoslawkarwacki.tsp.solver.TSPUseCase;
 import pl.radoslawkarwacki.tsp.solver.impl.TSPRecorder;
 import pl.radoslawkarwacki.tsp.solver.impl.annealing.AnnealingSolver;
 import pl.radoslawkarwacki.tsp.solver.impl.twoopt.TwoOptSwapSolver;
+import pl.radoslawkarwacki.tsp.solver.TSPUtil;
 
 import java.util.List;
 
@@ -50,6 +51,8 @@ public class TSPSolutionRunner {
         solver.addListener(recorder);
         solver.solve();
         RunStats stats;
+        int frames = recorder.getSolutionHistory().getNumberOfFrames();
+        double finalCost = frames > 0 ? TSPUtil.getTotalTravelCost(recorder.getSolutionHistory().getStep(frames - 1)) : 0.0;
         if (config.isAnnealing()) {
             AnnealingSolver annealingSolver = (AnnealingSolver) tspAlgorithm;
             double finalTemp = annealingSolver.getCurrentTemperature();
@@ -57,9 +60,37 @@ public class TSPSolutionRunner {
             int steps = annealingSolver.getStepsSoFar();
             int maxTrials = annealingSolver.getMaximumNumberOfTrials();
             String stopReason = finalTemp <= minTemp ? "Reached minimal temperature" : "Exceeded iterations without improvement";
-            stats = new RunStats("Annealing", finalTemp, minTemp, maxTrials, steps, recorder.getSolutionHistory().getNumberOfFrames(), stopReason);
+            stats = new RunStats(
+                    "Annealing",
+                    finalTemp,
+                    minTemp,
+                    maxTrials,
+                    steps,
+                    frames,
+                    stopReason,
+                    config.getNumberOfCities(),
+                    config.getRandomSeed(),
+                    config.getInitialTemperature(),
+                    config.getCoolingCoefficient(),
+                    config.getNumberOfTrials(),
+                    finalCost
+            );
         } else {
-            stats = new RunStats("2-opt", 0.0, 0.0, config.getNumberOfTrials(), 0, recorder.getSolutionHistory().getNumberOfFrames(), "Exceeded iterations without improvement");
+            stats = new RunStats(
+                    "2-opt",
+                    0.0,
+                    0.0,
+                    config.getNumberOfTrials(),
+                    0,
+                    frames,
+                    "Exceeded iterations without improvement",
+                    config.getNumberOfCities(),
+                    config.getRandomSeed(),
+                    config.getInitialTemperature(),
+                    config.getCoolingCoefficient(),
+                    config.getNumberOfTrials(),
+                    finalCost
+            );
         }
         return new SolveResult(recorder.getSolutionHistory(), stats);
     }

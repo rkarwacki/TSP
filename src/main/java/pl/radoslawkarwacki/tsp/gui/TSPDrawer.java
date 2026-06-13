@@ -197,11 +197,33 @@ public class TSPDrawer extends JPanel {
     }
 
     private static String formatRunStatsDetails(RunStats runStats) {
-        return "Frames: " + runStats.getTotalFrames()
-                + ("Annealing".equals(runStats.getAlgorithm())
-                    ? String.format(", final T=%.9f, minimal T=%.9f, temp lowerings=%d, max trials w/o improvement=%d",
-                        runStats.getFinalTemperature(), runStats.getMinimalTemperature(), runStats.getStepsLowered(), runStats.getMaxTrials())
-                    : String.format(", max trials w/o improvement=%d", runStats.getMaxTrials()));
+        if ("Annealing".equals(runStats.getAlgorithm())) {
+            return String.format(
+                    "Frames: %d, final cost=%.3f, final T=%.9f, minimal T=%.9f, temp lowerings=%d, max trials=%d; Initial: cities=%d, seed=%d, T0=%d, Tmin=%.9f, alpha=%.5f, trials=%d",
+                    runStats.getTotalFrames(),
+                    runStats.getFinalCost(),
+                    runStats.getFinalTemperature(),
+                    runStats.getMinimalTemperature(),
+                    runStats.getStepsLowered(),
+                    runStats.getMaxTrials(),
+                    runStats.getNumberOfCities(),
+                    runStats.getRandomSeed(),
+                    runStats.getInitialTemperature(),
+                    runStats.getMinimalTemperature(),
+                    runStats.getCoolingCoefficient(),
+                    runStats.getNumberOfTrials()
+            );
+        } else {
+            return String.format(
+                    "Frames: %d, final cost=%.3f, max trials=%d; Initial: cities=%d, seed=%d, trials=%d",
+                    runStats.getTotalFrames(),
+                    runStats.getFinalCost(),
+                    runStats.getMaxTrials(),
+                    runStats.getNumberOfCities(),
+                    runStats.getRandomSeed(),
+                    runStats.getNumberOfTrials()
+            );
+        }
     }
 
     public void startSimulation() {
