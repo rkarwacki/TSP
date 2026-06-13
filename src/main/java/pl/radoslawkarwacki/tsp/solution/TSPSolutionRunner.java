@@ -23,17 +23,25 @@ public class TSPSolutionRunner {
     }
 
     public SolutionHistory solveTSP() {
+        return solveTSP(null);
+    }
+
+    public SolutionHistory solveTSP(AnnealingSolver.ProgressListener progressListener) {
         MapGenerationConfiguration mapGenerationConfiguration =
                 new MapGenerationConfiguration(config.getNumberOfCities(), config.getRandomSeed(), config.getRangeX(), config.getRangeY());
         MapGenerator mapGenerator = new RandomMapGenerator(mapGenerationConfiguration);
         List<Point> points = mapGenerator.generateMap();
         TSPUseCase tspAlgorithm;
         if (config.isAnnealing()) {
-            tspAlgorithm = new AnnealingSolver(points,
+            AnnealingSolver annealing = new AnnealingSolver(points,
                     config.getInitialTemperature(),
                     config.getMinimalTemperature(),
                     config.getNumberOfTrials(),
                     config.getCoolingCoefficient());
+            if (progressListener != null) {
+                annealing.setProgressListener(progressListener);
+            }
+            tspAlgorithm = annealing;
         } else {
             tspAlgorithm = new TwoOptSwapSolver(points, config.getNumberOfTrials());
         }

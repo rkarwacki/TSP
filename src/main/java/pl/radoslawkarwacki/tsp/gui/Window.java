@@ -3,6 +3,7 @@ package pl.radoslawkarwacki.tsp.gui;
 import pl.radoslawkarwacki.tsp.config.AppConfig;
 import pl.radoslawkarwacki.tsp.model.SolutionHistory;
 import pl.radoslawkarwacki.tsp.solution.TSPSolutionRunner;
+import pl.radoslawkarwacki.tsp.solver.impl.annealing.AnnealingSolver;
 
 import javax.swing.*;
 import java.awt.*;
@@ -98,13 +99,19 @@ public class Window {
                         annealing, nCities, nTrials, seed, initT, minT, cool, chart, dMs, fib, rx, ry, w, h
                 );
 
-                // Prepare a modal progress dialog with an indeterminate progress bar
+                // Prepare a modal progress dialog with a progress bar
                 JDialog progress = new JDialog(frame, "Solving...", true);
                 progress.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
                 progress.setLayout(new BorderLayout(8, 8));
                 progress.add(new JLabel("Running " + (annealing ? "Simulated Annealing" : "2-opt") + " ..."), BorderLayout.NORTH);
                 JProgressBar bar = new JProgressBar();
-                bar.setIndeterminate(true);
+                if (annealing) {
+                    bar.setIndeterminate(false);
+                    bar.setStringPainted(true);
+                } else {
+                    bar.setIndeterminate(true);
+                    bar.setStringPainted(false);
+                }
                 progress.add(bar, BorderLayout.CENTER);
                 JButton cancel = new JButton("Close");
                 cancel.setEnabled(false);
@@ -112,17 +119,50 @@ public class Window {
                 progress.pack();
                 progress.setLocationRelativeTo(frame);
 
+                // Build a progress listener for annealing
+                AnnealingSolver.ProgressListener listener = null;
+                if (annealing) {
+                    listener = new AnnealingSolver.ProgressListener() {
+                        @Override
+                        public void onStart(int totalSteps) {
+                            SwingUtilities.invokeLater(() -> {
+                                bar.setMinimum(0);
+                                bar.setMaximum(Math.max(1, totalSteps));
+                                bar.setValue(0);
+                            });
+                        }
+
+                        @Override
+                        public void onProgress(int currentStep, int totalSteps) {
+                            SwingUtilities.invokeLater(() -> {
+                                if (bar.getMaximum() != Math.max(1, totalSteps)) {
+                                    bar.setMaximum(Math.max(1, totalSteps));
+                                }
+                                bar.setValue(Math.min(currentStep, bar.getMaximum()));
+                            });
+                        }
+                    };
+                }
+
                 // Run solving off the EDT
                 start.setEnabled(false);
+                AnnealingSolver.ProgressListener finalListener = listener;
                 SwingWorker<SolutionHistory, Void> worker = new SwingWorker<>() {
                     @Override
                     protected SolutionHistory doInBackground() {
-                        return new TSPSolutionRunner(config).solveTSP();
+                        return new TSPSolutionRunner(config).solveTSP(finalListener);
                     }
                     @Override
                     protected void done() {
                         try {
                             SolutionHistory history = get();
+                            // Ensure bar shows completion for annealing
+                            if (annealing) {
+                                SwingUtilities.invokeLater(() -> {
+                                    bar.setIndeterminate(false);
+                                    bar.setValue(bar.getMaximum());
+                                });
+                            }
                             progress.dispose();
                             showSimulation(history, config);
                         } catch (Exception ex) {
