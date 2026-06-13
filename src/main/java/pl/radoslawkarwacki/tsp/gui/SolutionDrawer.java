@@ -1,8 +1,8 @@
-package pl.radoslawkarwacki.gui;
+package pl.radoslawkarwacki.tsp.gui;
 
-import pl.radoslawkarwacki.model.Point;
-import pl.radoslawkarwacki.model.SolutionHistory;
-import pl.radoslawkarwacki.solver.TSPSolver;
+import pl.radoslawkarwacki.tsp.model.Point;
+import pl.radoslawkarwacki.tsp.model.SolutionHistory;
+import pl.radoslawkarwacki.tsp.solver.TSPUtil;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -22,7 +22,7 @@ public class SolutionDrawer {
     }
 
     public double getCostAtFrame(int frameNumber){
-        return TSPSolver.getTotalTourCost(solutionHistory.getStep(frameNumber));
+        return TSPUtil.getTotalTravelCost(solutionHistory.getStep(frameNumber));
     }
 
     public void setCurrentFrameToDraw(int currentFrameToDraw) {

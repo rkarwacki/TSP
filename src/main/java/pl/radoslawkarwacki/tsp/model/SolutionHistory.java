@@ -1,4 +1,4 @@
-package pl.radoslawkarwacki.model;
+package pl.radoslawkarwacki.tsp.model;
 
 import java.util.ArrayList;
 import java.util.List;

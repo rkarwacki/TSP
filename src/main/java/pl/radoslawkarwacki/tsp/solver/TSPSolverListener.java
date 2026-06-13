@@ -1,6 +1,6 @@
-package pl.radoslawkarwacki.solver;
+package pl.radoslawkarwacki.tsp.solver;
 
-import pl.radoslawkarwacki.model.Point;
+import pl.radoslawkarwacki.tsp.model.Point;
 
 import java.util.List;
 
