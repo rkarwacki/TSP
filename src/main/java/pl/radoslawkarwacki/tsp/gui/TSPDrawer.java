@@ -30,6 +30,7 @@ public class TSPDrawer extends JPanel {
     private JSlider frameSlider;
     private ChartDataSet chartDataSet = new ChartDataSet();
     private XYSeries series1 = new XYSeries("TSP");
+    private boolean chartSeriesInitialized = false;
 
 
     public TSPDrawer(SolutionHistory history, int delayMs, int replaySpeed, int windowSizeX, int windowSizeY, boolean drawChart, boolean playAnimation) {
@@ -46,7 +47,9 @@ public class TSPDrawer extends JPanel {
             } else {
                 drawLastFrame();
             }
-            series1.add(nextFrameNumber, solutionDrawer.getCostAtFrame(nextFrameNumber));
+            if (!chartSeriesInitialized) {
+                series1.add(nextFrameNumber, solutionDrawer.getCostAtFrame(nextFrameNumber));
+            }
             updateStatusBarWithCurrentFrameAndCostData();
         });
         initializeTimer();
@@ -62,6 +65,12 @@ public class TSPDrawer extends JPanel {
         }
         if (!frameSlider.getValueIsAdjusting()) {
             frameSlider.setValue(Math.min(nextFrameNumber, max));
+        }
+        if (drawChart && !chartSeriesInitialized && solutionDrawer != null) {
+            for (int i = 0; i < totalFramesCount; i++) {
+                series1.add(i, solutionDrawer.getCostAtFrame(i));
+            }
+            chartSeriesInitialized = true;
         }
     }
 
@@ -170,7 +179,9 @@ public class TSPDrawer extends JPanel {
             nextFrameNumber = totalFramesCount - 1;
             solutionDrawer.setCurrentFrameToDraw(nextFrameNumber);
             repaint();
-            series1.add(nextFrameNumber, solutionDrawer.getCostAtFrame(nextFrameNumber));
+            if (!chartSeriesInitialized) {
+                series1.add(nextFrameNumber, solutionDrawer.getCostAtFrame(nextFrameNumber));
+            }
             updateStatusBarWithCurrentFrameAndCostData();
             stopSimulation();
         }
