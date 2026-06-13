@@ -24,6 +24,7 @@ public class TSPDrawer extends JPanel {
     private final boolean drawChart;
 
     private JLabel statusBar = new JLabel(" ");
+    private JSlider frameSlider;
     private ChartDataSet chartDataSet = new ChartDataSet();
     private XYSeries series1 = new XYSeries("TSP");
 
@@ -49,6 +50,13 @@ public class TSPDrawer extends JPanel {
         solutionDrawer = new SolutionDrawer(history);
         nextFrameNumber = currentFrameToDisplay += replaySpeed;
         totalFramesCount = solutionDrawer.getNoOfFrames();
+        int max = Math.max(0, totalFramesCount - 1);
+        if (frameSlider.getMaximum() != max) {
+            frameSlider.setMaximum(max);
+        }
+        if (!frameSlider.getValueIsAdjusting()) {
+            frameSlider.setValue(Math.min(nextFrameNumber, max));
+        }
     }
 
     private void drawFrame() {
@@ -69,7 +77,28 @@ public class TSPDrawer extends JPanel {
 
     private void initializeWindow(int windowSizeX, int windowSizeY) {
         setLayout(new BorderLayout());
-        add(statusBar, BorderLayout.SOUTH);
+
+        JPanel bottom = new JPanel(new BorderLayout());
+        bottom.add(statusBar, BorderLayout.WEST);
+
+        frameSlider = new JSlider(0, 0, 0);
+        frameSlider.setEnabled(false);
+        frameSlider.addChangeListener(e -> {
+            if (!frameSlider.isEnabled()) {
+                return;
+            }
+            int v = frameSlider.getValue();
+            nextFrameNumber = Math.min(Math.max(v, 0), Math.max(0, totalFramesCount - 1));
+            if (solutionDrawer != null) {
+                solutionDrawer.setCurrentFrameToDraw(nextFrameNumber);
+                repaint();
+                updateStatusBarWithCurrentFrameAndCostData();
+            }
+        });
+        bottom.add(frameSlider, BorderLayout.CENTER);
+
+        add(bottom, BorderLayout.SOUTH);
+
         setOpaque(false);
         WINDOW_SIZE_X = windowSizeX;
         WINDOW_SIZE_Y = windowSizeY;
@@ -94,6 +123,12 @@ public class TSPDrawer extends JPanel {
 
     private void stopSimulation() {
         timer.stop();
+        if (frameSlider != null) {
+            frameSlider.setEnabled(true);
+            int max = Math.max(0, totalFramesCount - 1);
+            frameSlider.setMaximum(max);
+            frameSlider.setValue(Math.min(nextFrameNumber, max));
+        }
         if (drawChart) {
             chartDataSet.addSeriesToCollection(new XYSeries("Result"));
             chartDataSet.addSeriesToCollection(series1);
