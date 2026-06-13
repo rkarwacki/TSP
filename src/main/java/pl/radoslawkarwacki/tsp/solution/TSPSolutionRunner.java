@@ -1,5 +1,6 @@
 package pl.radoslawkarwacki.tsp.solution;
 
+import pl.radoslawkarwacki.tsp.config.AppConfig;
 import pl.radoslawkarwacki.tsp.mapgeneration.MapGenerationConfiguration;
 import pl.radoslawkarwacki.tsp.mapgeneration.MapGenerator;
 import pl.radoslawkarwacki.tsp.mapgeneration.impl.MultipleClustersMapGenerator;
@@ -14,19 +15,28 @@ import pl.radoslawkarwacki.tsp.solver.impl.twoopt.TwoOptSwapSolver;
 
 import java.util.List;
 
-import static pl.radoslawkarwacki.tsp.Main.*;
-
 public class TSPSolutionRunner {
 
+    private final AppConfig config;
+
+    public TSPSolutionRunner(AppConfig config) {
+        this.config = config;
+    }
+
     public SolutionHistory solveTSP() {
-        MapGenerationConfiguration mapGenerationConfiguration = new MapGenerationConfiguration(NUMBER_OF_CITIES, RANDOM_SEED, RANGE_X, RANGE_Y);
+        MapGenerationConfiguration mapGenerationConfiguration =
+                new MapGenerationConfiguration(config.getNumberOfCities(), config.getRandomSeed(), config.getRangeX(), config.getRangeY());
         MapGenerator mapGenerator = new MultipleClustersMapGenerator(mapGenerationConfiguration);
         List<Point> points = mapGenerator.generateMap();
         TSPUseCase tspAlgorithm;
-        if (ANNEALING) {
-            tspAlgorithm = new AnnealingSolver(points, INITIAL_TEMPERATURE, MINIMAL_TEMPERATURE, NUMBER_OF_TRIALS, COOLING_COEFFICIENT);
+        if (config.isAnnealing()) {
+            tspAlgorithm = new AnnealingSolver(points,
+                    config.getInitialTemperature(),
+                    config.getMinimalTemperature(),
+                    config.getNumberOfTrials(),
+                    config.getCoolingCoefficient());
         } else {
-            tspAlgorithm = new TwoOptSwapSolver(points, NUMBER_OF_TRIALS);
+            tspAlgorithm = new TwoOptSwapSolver(points, config.getNumberOfTrials());
         }
         TSPSolver solver = new TSPSolver(tspAlgorithm);
         TSPRecorder recorder = new TSPRecorder();

@@ -8,7 +8,7 @@ import pl.radoslawkarwacki.tsp.model.SolutionHistory;
 import javax.swing.*;
 import java.awt.*;
 
-import static pl.radoslawkarwacki.tsp.Main.DRAW_CHART;
+
 
 public class TSPDrawer extends JPanel {
 
@@ -21,14 +21,16 @@ public class TSPDrawer extends JPanel {
 
     private SolutionDrawer solutionDrawer = null;
     private Timer timer;
+    private final boolean drawChart;
 
     private JLabel statusBar = new JLabel(" ");
     private ChartDataSet chartDataSet = new ChartDataSet();
     private XYSeries series1 = new XYSeries("TSP");
 
 
-    public TSPDrawer(SolutionHistory history, int delayMs, int replaySpeed, int windowSizeX, int windowSizeY) {
+    public TSPDrawer(SolutionHistory history, int delayMs, int replaySpeed, int windowSizeX, int windowSizeY, boolean drawChart) {
         initializeWindow(windowSizeX, windowSizeY);
+        this.drawChart = drawChart;
 
         timer = new Timer(delayMs, e -> {
             initializeSolutionDrawer(history, replaySpeed);
@@ -92,7 +94,7 @@ public class TSPDrawer extends JPanel {
 
     private void stopSimulation() {
         timer.stop();
-        if (DRAW_CHART) {
+        if (drawChart) {
             chartDataSet.addSeriesToCollection(new XYSeries("Result"));
             chartDataSet.addSeriesToCollection(series1);
             new LineChart("TSP", chartDataSet.getDataset()).showChart();
