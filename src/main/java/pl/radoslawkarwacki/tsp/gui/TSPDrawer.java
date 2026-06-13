@@ -132,7 +132,26 @@ public class TSPDrawer extends JPanel {
         if (drawChart) {
             chartDataSet.addSeriesToCollection(new XYSeries("Result"));
             chartDataSet.addSeriesToCollection(series1);
-            new LineChart("TSP", chartDataSet.getDataset()).showChart();
+            org.jfree.chart.JFreeChart chart = org.jfree.chart.ChartFactory.createXYLineChart(
+                    "TSP",
+                    "Iteration",
+                    "Cost",
+                    chartDataSet.getDataset(),
+                    org.jfree.chart.plot.PlotOrientation.VERTICAL,
+                    true,
+                    true,
+                    false
+            );
+            org.jfree.chart.ChartPanel chartPanel = new org.jfree.chart.ChartPanel(chart);
+            javax.swing.JFrame chartFrame = new javax.swing.JFrame("TSP Cost");
+            chartFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            chartFrame.setContentPane(chartPanel);
+            chartFrame.pack();
+            java.awt.Window parent = SwingUtilities.getWindowAncestor(this);
+            if (parent != null) {
+                chartFrame.setLocationRelativeTo(parent);
+            }
+            chartFrame.setVisible(true);
         }
     }
 
