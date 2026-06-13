@@ -177,7 +177,7 @@ public class TSPDrawer extends JPanel {
                 String info = "<html><b>" + runStats.getAlgorithm() + "</b> — " + runStats.getStopReason()
                         + "<br/>Frames: " + runStats.getTotalFrames()
                         + ("Annealing".equals(runStats.getAlgorithm())
-                            ? String.format(", final T=%.6f, minimal T=%.6f, temp lowerings=%d, max trials w/o improvement=%d",
+                            ? String.format(", final T=%.9f, minimal T=%.9f, temp lowerings=%d, max trials w/o improvement=%d",
                                 runStats.getFinalTemperature(), runStats.getMinimalTemperature(), runStats.getStepsLowered(), runStats.getMaxTrials())
                             : String.format(", max trials w/o improvement=%d", runStats.getMaxTrials()))
                         + "</html>";
