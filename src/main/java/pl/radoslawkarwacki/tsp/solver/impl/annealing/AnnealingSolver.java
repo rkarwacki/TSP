@@ -17,6 +17,8 @@ public class AnnealingSolver implements TSPUseCase {
     private ProgressListener progressListener;
     private int expectedTotalLowerings;
     private int stepsSoFar;
+    private int trialsAtTemperature;
+    private final int epochLength;
 
 
     public AnnealingSolver(List<Point> initialPoints, double initialTemperature, double minimalTemperature, int maximumNumberOfTrials, double coolingCoefficient) {
@@ -27,6 +29,8 @@ public class AnnealingSolver implements TSPUseCase {
         this.coolingCoefficient = coolingCoefficient;
         this.expectedTotalLowerings = computeExpectedLowerings(initialTemperature, minimalTemperature, coolingCoefficient);
         this.stepsSoFar = 0;
+        this.epochLength = Math.max(1, initialPoints != null ? initialPoints.size() * 100 : 35000);
+        this.trialsAtTemperature = 0;
     }
 
     public interface ProgressListener {
@@ -52,11 +56,7 @@ public class AnnealingSolver implements TSPUseCase {
 
     @Override
     public void useImprovement(List<Point> points) {
-        lowerTemperature();
-        stepsSoFar++;
-        if (progressListener != null) {
-            progressListener.onProgress(stepsSoFar, expectedTotalLowerings);
-        }
+        // Cooling is handled per-epoch inside isABetterCandidate()
     }
 
 
@@ -72,7 +72,23 @@ public class AnnealingSolver implements TSPUseCase {
 
     @Override
     public boolean isABetterCandidate(double travelCostDifference) {
-        return travelCostDifference < 0 || (travelCostDifference > 0 && Math.exp(-travelCostDifference / currentTemperature) > Math.random());
+        boolean accept = travelCostDifference < 0
+                || (travelCostDifference > 0 && Math.exp(-travelCostDifference / currentTemperature) > Math.random());
+
+        // Count every trial at the current temperature
+        trialsAtTemperature++;
+
+        // Cool down after a full epoch of trials
+        if (trialsAtTemperature >= epochLength) {
+            lowerTemperature();
+            trialsAtTemperature = 0;
+            stepsSoFar++;
+            if (progressListener != null) {
+                progressListener.onProgress(stepsSoFar, expectedTotalLowerings);
+            }
+        }
+
+        return accept;
     }
 
     @Override
