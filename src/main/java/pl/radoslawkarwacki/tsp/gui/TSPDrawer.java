@@ -1,8 +1,9 @@
 package pl.radoslawkarwacki.tsp.gui;
 
 import org.jfree.data.xy.XYSeries;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.radoslawkarwacki.tsp.chart.ChartDataSet;
-import pl.radoslawkarwacki.tsp.chart.LineChart;
 import pl.radoslawkarwacki.tsp.model.SolutionHistory;
 import pl.radoslawkarwacki.tsp.solution.RunStats;
 
@@ -12,6 +13,8 @@ import java.awt.*;
 
 
 public class TSPDrawer extends JPanel {
+
+    private static final Logger logger = LoggerFactory.getLogger(TSPDrawer.class);
 
     private static int WINDOW_SIZE_X;
     private static int WINDOW_SIZE_Y;
@@ -174,12 +177,10 @@ public class TSPDrawer extends JPanel {
             javax.swing.JPanel container = new javax.swing.JPanel(new java.awt.BorderLayout());
             container.add(chartPanel, java.awt.BorderLayout.CENTER);
             if (runStats != null) {
+                String details = formatRunStatsDetails(runStats);
+                logger.info("Run stats: {} — {}, {}", runStats.getAlgorithm(), runStats.getStopReason(), details);
                 String info = "<html><b>" + runStats.getAlgorithm() + "</b> — " + runStats.getStopReason()
-                        + "<br/>Frames: " + runStats.getTotalFrames()
-                        + ("Annealing".equals(runStats.getAlgorithm())
-                            ? String.format(", final T=%.9f, minimal T=%.9f, temp lowerings=%d, max trials w/o improvement=%d",
-                                runStats.getFinalTemperature(), runStats.getMinimalTemperature(), runStats.getStepsLowered(), runStats.getMaxTrials())
-                            : String.format(", max trials w/o improvement=%d", runStats.getMaxTrials()))
+                        + "<br/>" + details
                         + "</html>";
                 javax.swing.JLabel infoLabel = new javax.swing.JLabel(info);
                 infoLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(6, 10, 6, 10));
@@ -193,6 +194,14 @@ public class TSPDrawer extends JPanel {
             }
             chartFrame.setVisible(true);
         }
+    }
+
+    private static String formatRunStatsDetails(RunStats runStats) {
+        return "Frames: " + runStats.getTotalFrames()
+                + ("Annealing".equals(runStats.getAlgorithm())
+                    ? String.format(", final T=%.9f, minimal T=%.9f, temp lowerings=%d, max trials w/o improvement=%d",
+                        runStats.getFinalTemperature(), runStats.getMinimalTemperature(), runStats.getStepsLowered(), runStats.getMaxTrials())
+                    : String.format(", max trials w/o improvement=%d", runStats.getMaxTrials()));
     }
 
     public void startSimulation() {
